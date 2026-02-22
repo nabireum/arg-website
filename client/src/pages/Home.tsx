@@ -74,7 +74,7 @@ export default function Home() {
             fontFamily: "'Space Mono', monospace",
             letterSpacing: '0.1em'
           }}>
-            ESCOLHA SEU CAMINHO
+            A PRIMEIRA ESCOLHA.
           </p>
         </div>
 
@@ -107,7 +107,7 @@ export default function Home() {
             letterSpacing: '0.05em',
             color: 'rgba(255,255,255,0.6)'
           }}>
-            SEM LIMITE DE TEMPO • RESOLVA NO SEU RITMO
+            RESOLVA NO SEU RITMO
           </div>
 
           {/* Hard Mode Button */}
@@ -137,7 +137,7 @@ export default function Home() {
             letterSpacing: '0.05em',
             color: 'rgba(255,255,255,0.6)'
           }}>
-            CRONÔMETRO DE 15 MINUTOS • RESOLVA TODOS OS ENIGMAS ANTES DO TEMPO ACABAR
+            RESOLVA TUDO ANTES DO TEMPO ACABAR (e ganhe um BÔNUS)
           </div>
         </div>
 
