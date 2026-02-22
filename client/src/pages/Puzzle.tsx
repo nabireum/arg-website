@@ -8,44 +8,55 @@ import { useEffect, useState } from 'react';
  * Design Philosophy: Minimalismo Cibernético Distópico
  * - Exibe um enigma por vez
  * - Timer visível no topo em modo HARD
- * - Sistema de navegação entre enigmas
+ * - Sistema de navegação entre enigmas com slugs personalizados
+ * 
+ * COMO ADICIONAR NOVOS ENIGMAS:
+ * 1. Adicione um novo objeto ao array PUZZLES_BY_SLUG abaixo
+ * 2. Use um slug único (ex: "cofre", "arquivo", "segredo")
+ * 3. O slug será usado na URL: /segredobalian.com/[slug]
+ * 4. Defina title, question, hint, answer e nextSlug (null se for o último)
  */
 
-// Exemplo de enigmas - você pode expandir isso
-const PUZZLES = [
-  {
-    id: 0,
-    title: 'PUZZLE 01',
-    question: 'WHAT LIES BENEATH THE SURFACE?',
-    hint: 'LOOK FOR HIDDEN TEXT IN THE PAGE SOURCE',
-    answer: 'truth',
+interface Puzzle {
+  slug: string;
+  title: string;
+  question: string;
+  hint: string;
+  answer: string;
+  nextSlug: string | null; // slug do próximo enigma, null se for o último
+}
+
+// Mapa de enigmas por slug
+const PUZZLES_BY_SLUG: Record<string, Puzzle> = {
+  cofre: {
+    slug: 'cofre',
+    title: 'COFRE',
+    question: `Se está lendo isso, então provavelmente gostaria de saber a verdade. Mas preciso ter certeza de que a pessoa errada não chegou até aqui por engano. Se teve acesso àqueles documentos, então já sabe o que fazer. Prove que meu segredo está seguro contigo.`,
+    hint: 'A resposta está nos documentos que você encontrou anteriormente',
+    answer: '7Q!mZ9@F#2KxR$A8',
+    nextSlug: null, // Será preenchido quando você adicionar o próximo enigma
   },
-  {
-    id: 1,
-    title: 'PUZZLE 02',
-    question: 'THE ANSWER IS ALWAYS HIDDEN IN PLAIN SIGHT',
-    hint: 'THINK ABOUT WHAT YOU SEE',
-    answer: 'see',
-  },
-  {
-    id: 2,
-    title: 'PUZZLE 03',
-    question: 'FINAL TEST: WHAT HAVE YOU LEARNED?',
-    hint: 'REMEMBER THE BEGINNING',
-    answer: 'believe',
-  },
-];
+  // EXEMPLO DE COMO ADICIONAR NOVO ENIGMA:
+  // arquivo: {
+  //   slug: 'arquivo',
+  //   title: 'ARQUIVO',
+  //   question: 'Sua pergunta aqui',
+  //   hint: 'Sua dica aqui',
+  //   answer: 'resposta',
+  //   nextSlug: null,
+  // },
+};
 
 export default function Puzzle() {
-  const [match, params] = useRoute('/puzzle/:id');
+  const [match, params] = useRoute('/:slug');
   const [, navigate] = useLocation();
-  const { mode, timeRemaining, isTimeUp, currentPuzzleIndex, setCurrentPuzzleIndex, markPuzzleComplete, completedPuzzles, endGame } = useGame();
+  const { mode, timeRemaining, isTimeUp, completedPuzzles, markPuzzleComplete, endGame } = useGame();
   const [userAnswer, setUserAnswer] = useState('');
   const [showHint, setShowHint] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
 
-  const puzzleId = parseInt(params?.id || '0');
-  const currentPuzzle = PUZZLES[puzzleId];
+  const slug = params?.slug;
+  const currentPuzzle = slug ? PUZZLES_BY_SLUG[slug] : null;
 
   // Redireciona para home se não estiver em um modo de jogo
   useEffect(() => {
@@ -62,19 +73,26 @@ export default function Puzzle() {
     }
   }, [isTimeUp, mode, endGame, navigate]);
 
+  // Redireciona para home se o enigma não existir
+  useEffect(() => {
+    if (match && !currentPuzzle) {
+      navigate('/');
+    }
+  }, [match, currentPuzzle, navigate]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (userAnswer.toLowerCase().trim() === currentPuzzle.answer.toLowerCase()) {
+    if (userAnswer.toLowerCase().trim() === currentPuzzle!.answer.toLowerCase()) {
       setIsCorrect(true);
-      markPuzzleComplete(puzzleId);
+      markPuzzleComplete(slug!);
       
       // Se houver próximo enigma, vai para lá após 1 segundo
       setTimeout(() => {
-        if (puzzleId < PUZZLES.length - 1) {
+        if (currentPuzzle!.nextSlug) {
           setUserAnswer('');
           setShowHint(false);
           setIsCorrect(false);
-          navigate(`/puzzle/${puzzleId + 1}`);
+          navigate(`/${currentPuzzle!.nextSlug}`);
         } else {
           // Completou todos os enigmas
           endGame();
@@ -137,7 +155,7 @@ export default function Puzzle() {
             fontFamily: "'Space Mono', monospace",
             color: 'rgba(255,255,255,0.6)'
           }}>
-            PUZZLE {puzzleId + 1} OF {PUZZLES.length}
+            ENIGMA: {slug?.toUpperCase()}
           </p>
           
           {/* Progress bar */}
@@ -145,7 +163,7 @@ export default function Puzzle() {
             <div 
               className="h-full bg-white transition-all duration-300"
               style={{
-                width: `${((puzzleId + 1) / PUZZLES.length) * 100}%`
+                width: `${((completedPuzzles.size + 1) / Object.keys(PUZZLES_BY_SLUG).length) * 100}%`
               }}
             />
           </div>
@@ -164,21 +182,30 @@ export default function Puzzle() {
         <div className="h-px bg-white my-8 mx-auto w-32" />
 
         {/* Puzzle question */}
-        <p className="text-lg md:text-xl text-center mb-12" style={{
+        <p className="text-base md:text-lg text-center mb-12" style={{
           fontFamily: "'Space Mono', monospace",
           letterSpacing: '0.05em',
-          lineHeight: '1.8'
+          lineHeight: '1.8',
+          whiteSpace: 'pre-wrap'
         }}>
           {currentPuzzle.question}
         </p>
 
         {/* Input form */}
         <form onSubmit={handleSubmit} className="flex flex-col gap-4 mb-8">
+          <label className="text-sm" style={{
+            fontFamily: "'Space Mono', monospace",
+            letterSpacing: '0.05em',
+            color: 'rgba(255,255,255,0.7)'
+          }}>
+            INSIRA A SENHA
+          </label>
+          
           <input
-            type="text"
+            type="password"
             value={userAnswer}
             onChange={(e) => setUserAnswer(e.target.value)}
-            placeholder="ENTER YOUR ANSWER"
+            placeholder="••••••••••••••••"
             disabled={isCorrect}
             className="px-4 py-4 bg-gray-900 border-2 border-white text-white placeholder-gray-500 focus:outline-none focus:border-white transition-colors disabled:opacity-50"
             style={{
@@ -200,7 +227,7 @@ export default function Puzzle() {
               textTransform: 'uppercase'
             }}
           >
-            {isCorrect ? '✓ CORRECT' : 'SUBMIT'}
+            {isCorrect ? '✓ CORRETO' : 'ENVIAR'}
           </button>
         </form>
 
@@ -215,7 +242,7 @@ export default function Puzzle() {
               textTransform: 'uppercase'
             }}
           >
-            {showHint ? 'HIDE HINT' : 'SHOW HINT'}
+            {showHint ? 'OCULTAR DICA' : 'MOSTRAR DICA'}
           </button>
         </div>
 
@@ -226,7 +253,7 @@ export default function Puzzle() {
             letterSpacing: '0.05em',
             color: 'rgba(255,255,255,0.8)'
           }}>
-            <p className="text-sm">HINT: {currentPuzzle.hint}</p>
+            <p className="text-sm">DICA: {currentPuzzle.hint}</p>
           </div>
         )}
 
@@ -236,7 +263,7 @@ export default function Puzzle() {
             fontFamily: "'Space Mono', monospace",
             color: 'rgba(255,255,255,0.4)'
           }}>
-            <p>PUZZLES SOLVED: {completedPuzzles.size} / {PUZZLES.length}</p>
+            <p>ENIGMAS RESOLVIDOS: {completedPuzzles.size} / {Object.keys(PUZZLES_BY_SLUG).length}</p>
           </div>
         )}
       </div>

@@ -8,10 +8,8 @@ interface GameContextType {
   endGame: () => void;
   timeRemaining: number;
   isTimeUp: boolean;
-  currentPuzzleIndex: number;
-  setCurrentPuzzleIndex: (index: number) => void;
-  completedPuzzles: Set<number>;
-  markPuzzleComplete: (index: number) => void;
+  completedPuzzles: Set<string>;
+  markPuzzleComplete: (slug: string) => void;
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -22,8 +20,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
   const [mode, setMode] = useState<GameMode>(null);
   const [timeRemaining, setTimeRemaining] = useState(HARD_MODE_TIME);
   const [isTimeUp, setIsTimeUp] = useState(false);
-  const [currentPuzzleIndex, setCurrentPuzzleIndex] = useState(0);
-  const [completedPuzzles, setCompletedPuzzles] = useState<Set<number>>(new Set());
+  const [completedPuzzles, setCompletedPuzzles] = useState<Set<string>>(new Set());
 
   // Timer effect - only runs in hard mode
   useEffect(() => {
@@ -46,7 +43,6 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     setMode(selectedMode);
     setTimeRemaining(HARD_MODE_TIME);
     setIsTimeUp(false);
-    setCurrentPuzzleIndex(0);
     setCompletedPuzzles(new Set());
   }, []);
 
@@ -54,12 +50,11 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     setMode(null);
     setTimeRemaining(HARD_MODE_TIME);
     setIsTimeUp(false);
-    setCurrentPuzzleIndex(0);
     setCompletedPuzzles(new Set());
   }, []);
 
-  const markPuzzleComplete = useCallback((index: number) => {
-    setCompletedPuzzles((prev) => new Set([...Array.from(prev), index]));
+  const markPuzzleComplete = useCallback((slug: string) => {
+    setCompletedPuzzles((prev) => new Set([...Array.from(prev), slug]));
   }, []);
 
   const value: GameContextType = {
@@ -68,8 +63,6 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     endGame,
     timeRemaining,
     isTimeUp,
-    currentPuzzleIndex,
-    setCurrentPuzzleIndex,
     completedPuzzles: completedPuzzles,
     markPuzzleComplete,
   };

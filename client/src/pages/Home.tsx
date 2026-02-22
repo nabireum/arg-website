@@ -10,16 +10,19 @@ import { useEffect } from 'react';
  * - Cores: Preto absoluto + branco puro
  * - Efeitos: Glitch, tremor, contraste extremo
  * - Layout: Centralizado verticalmente, assimétrico horizontalmente
+ * 
+ * Contexto: Danica Balian escondeu emails com informações sobre seu desaparecimento.
+ * O jogador precisa provar que é de confiança resolvendo enigmas para acessar a verdade.
  */
 
 export default function Home() {
-  const { startGame, mode, endGame } = useGame();
+  const { startGame, mode } = useGame();
   const [, navigate] = useLocation();
 
   // Se o jogo já começou, redireciona para o primeiro enigma
   useEffect(() => {
     if (mode) {
-      navigate('/puzzle/0');
+      navigate('/cofre');
     }
   }, [mode, navigate]);
 
@@ -53,21 +56,15 @@ export default function Home() {
 
       {/* Main content */}
       <div className="relative z-10 max-w-2xl w-full">
-        {/* Title with glitch effect */}
+        {/* Title - Empty for mystery */}
         <div className="mb-16 text-center">
           <h1 className="text-6xl md:text-7xl font-bold mb-4 tracking-tighter" style={{
             fontFamily: "'IBM Plex Mono', monospace",
             textShadow: '2px 2px 0px rgba(255,255,255,0.1)',
-            letterSpacing: '-0.02em'
+            letterSpacing: '-0.02em',
+            minHeight: '4rem'
           }}>
-            DO NOT
-          </h1>
-          <h1 className="text-6xl md:text-7xl font-bold mb-8 tracking-tighter flicker" style={{
-            fontFamily: "'IBM Plex Mono', monospace",
-            textShadow: '2px 2px 0px rgba(255,255,255,0.1)',
-            letterSpacing: '-0.02em'
-          }}>
-            BELIEVE
+            {/* Empty - mystery element */}
           </h1>
           
           {/* Divider line */}
@@ -77,7 +74,7 @@ export default function Home() {
             fontFamily: "'Space Mono', monospace",
             letterSpacing: '0.1em'
           }}>
-            CHOOSE YOUR PATH
+            ESCOLHA SEU CAMINHO
           </p>
         </div>
 
@@ -96,7 +93,7 @@ export default function Home() {
             }}
           >
             <span className="relative z-10 block">
-              Mode: NORMAL
+              Modo: Normal
             </span>
             {/* Hover glow effect */}
             <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-100" style={{
@@ -110,7 +107,7 @@ export default function Home() {
             letterSpacing: '0.05em',
             color: 'rgba(255,255,255,0.6)'
           }}>
-            NO TIME LIMIT • SOLVE AT YOUR OWN PACE
+            SEM LIMITE DE TEMPO • RESOLVA NO SEU RITMO
           </div>
 
           {/* Hard Mode Button */}
@@ -126,7 +123,7 @@ export default function Home() {
             }}
           >
             <span className="relative z-10 block">
-              Mode: HARD
+              Modo: Difícil
             </span>
             {/* Hover glow effect */}
             <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-100" style={{
@@ -140,7 +137,7 @@ export default function Home() {
             letterSpacing: '0.05em',
             color: 'rgba(255,255,255,0.6)'
           }}>
-            15 MINUTE TIMER • SOLVE ALL PUZZLES BEFORE TIME RUNS OUT
+            CRONÔMETRO DE 15 MINUTOS • RESOLVA TODOS OS ENIGMAS ANTES DO TEMPO ACABAR
           </div>
         </div>
 
@@ -150,8 +147,8 @@ export default function Home() {
           letterSpacing: '0.05em',
           color: 'rgba(255,255,255,0.4)'
         }}>
-          <p>WARNING: SOME TRUTHS ARE BETTER LEFT UNKNOWN</p>
-          <p className="mt-2">PROCEED AT YOUR OWN RISK</p>
+          <p>AVISO: ALGUMAS VERDADES SÃO PERIGOSAS</p>
+          <p className="mt-2">PROSSIGA POR SUA CONTA E RISCO</p>
         </div>
       </div>
     </div>
