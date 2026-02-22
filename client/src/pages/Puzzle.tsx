@@ -1,71 +1,64 @@
 import { useGame } from '@/contexts/GameContext';
 import { useLocation, useRoute } from 'wouter';
 import { useEffect, useState } from 'react';
+import { obterEnigma, validarResposta, ENIGMAS_LISTA } from '@/data/enigmas';
 
 /**
- * Puzzle Page - ARG Cyberpunk Dystopian Style
+ * PUZZLE PAGE - Página de Enigmas do ARG
  * 
  * Design Philosophy: Minimalismo Cibernético Distópico
  * - Exibe um enigma por vez
  * - Timer visível no topo em modo HARD
  * - Sistema de navegação entre enigmas com slugs personalizados
  * 
- * COMO ADICIONAR NOVOS ENIGMAS:
- * 1. Adicione um novo objeto ao array PUZZLES_BY_SLUG abaixo
- * 2. Use um slug único (ex: "cofre", "arquivo", "segredo")
- * 3. O slug será usado na URL: /segredobalian.com/[slug]
- * 4. Defina title, question, hint, answer e nextSlug (null se for o último)
+ * COMO FUNCIONA:
+ * 1. A URL contém o slug do enigma (ex: /cofre, /arquivo)
+ * 2. O componente busca o enigma no arquivo enigmas.ts
+ * 3. O jogador insere a resposta e clica em ENVIAR
+ * 4. Se correto, vai para o próximo enigma
+ * 5. Se for o último, volta para a página inicial
  */
 
-interface Puzzle {
-  slug: string;
-  title: string;
-  question: string;
-  hint: string;
-  answer: string;
-  nextSlug: string | null; // slug do próximo enigma, null se for o último
-}
-
-// Mapa de enigmas por slug
-const PUZZLES_BY_SLUG: Record<string, Puzzle> = {
-  cofre: {
-    slug: 'cofre',
-    title: 'COFRE',
-    question: `Se está lendo isso, então provavelmente gostaria de saber a verdade. Mas preciso ter certeza de que a pessoa errada não chegou até aqui por engano. Se teve acesso àqueles documentos, então já sabe o que fazer. Prove que meu segredo está seguro contigo.`,
-    hint: 'A resposta está nos documentos que você encontrou anteriormente',
-    answer: '7Q!mZ9@F#2KxR$A8',
-    nextSlug: null, // Será preenchido quando você adicionar o próximo enigma
-  },
-  // EXEMPLO DE COMO ADICIONAR NOVO ENIGMA:
-  // arquivo: {
-  //   slug: 'arquivo',
-  //   title: 'ARQUIVO',
-  //   question: 'Sua pergunta aqui',
-  //   hint: 'Sua dica aqui',
-  //   answer: 'resposta',
-  //   nextSlug: null,
-  // },
-};
-
 export default function Puzzle() {
+  // ==================== HOOKS DE ROTEAMENTO ====================
+  // match: true se a rota atual é um slug válido
+  // params: contém o slug da URL (ex: { slug: 'cofre' })
   const [match, params] = useRoute('/:slug');
   const [, navigate] = useLocation();
+
+  // ==================== HOOKS DO CONTEXTO DO JOGO ====================
+  // mode: 'normal' ou 'hard' (null se não iniciou)
+  // timeRemaining: tempo restante em segundos (só em modo hard)
+  // isTimeUp: true se o tempo acabou
+  // completedPuzzles: Set com os slugs dos enigmas resolvidos
+  // markPuzzleComplete: função para marcar um enigma como completo
+  // endGame: função para finalizar o jogo
   const { mode, timeRemaining, isTimeUp, completedPuzzles, markPuzzleComplete, endGame } = useGame();
+
+  // ==================== ESTADO LOCAL ====================
+  // userAnswer: o que o jogador digitou no campo de senha
   const [userAnswer, setUserAnswer] = useState('');
+  // showHint: se a dica está visível ou não
   const [showHint, setShowHint] = useState(false);
+  // isCorrect: true se a resposta foi aceita (para desabilitar inputs)
   const [isCorrect, setIsCorrect] = useState(false);
 
+  // ==================== EXTRAÇÃO DE DADOS ====================
+  // slug: o identificador do enigma na URL
   const slug = params?.slug;
-  const currentPuzzle = slug ? PUZZLES_BY_SLUG[slug] : null;
+  // currentPuzzle: o objeto do enigma atual (ou undefined se não existir)
+  const currentPuzzle = slug ? obterEnigma(slug) : null;
 
-  // Redireciona para home se não estiver em um modo de jogo
+  // ==================== EFEITO: Validar se o jogo começou ====================
+  // Se não estiver em um modo de jogo, redireciona para home
   useEffect(() => {
     if (!mode) {
       navigate('/');
     }
   }, [mode, navigate]);
 
-  // Redireciona para home se o tempo acabar em modo HARD
+  // ==================== EFEITO: Validar se o tempo acabou ====================
+  // Em modo HARD, se o tempo acabar, finaliza o jogo e volta para home
   useEffect(() => {
     if (isTimeUp && mode === 'hard') {
       endGame();
@@ -73,45 +66,60 @@ export default function Puzzle() {
     }
   }, [isTimeUp, mode, endGame, navigate]);
 
-  // Redireciona para home se o enigma não existir
+  // ==================== EFEITO: Validar se o enigma existe ====================
+  // Se a rota é válida mas o enigma não existe, redireciona para home
   useEffect(() => {
     if (match && !currentPuzzle) {
       navigate('/');
     }
   }, [match, currentPuzzle, navigate]);
 
+  // ==================== HANDLER: Submeter resposta ====================
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (userAnswer.toLowerCase().trim() === currentPuzzle!.answer.toLowerCase()) {
+
+    // Valida a resposta usando a função do arquivo enigmas.ts
+    if (validarResposta(slug!, userAnswer)) {
+      // ✓ Resposta correta!
       setIsCorrect(true);
+      // Marca este enigma como completo
       markPuzzleComplete(slug!);
-      
-      // Se houver próximo enigma, vai para lá após 1 segundo
+
+      // Aguarda 1 segundo e depois navega para o próximo
       setTimeout(() => {
-        if (currentPuzzle!.nextSlug) {
+        // Obtém o próximo enigma
+        const proximoEnigma = currentPuzzle!.nextSlug;
+
+        if (proximoEnigma) {
+          // Se houver próximo, vai para lá
           setUserAnswer('');
           setShowHint(false);
           setIsCorrect(false);
-          navigate(`/${currentPuzzle!.nextSlug}`);
+          navigate(`/${proximoEnigma}`);
         } else {
-          // Completou todos os enigmas
+          // Se não houver próximo, completou todos os enigmas!
           endGame();
           navigate('/');
         }
       }, 1000);
     }
+    // Se a resposta estiver errada, o campo fica vermelho (CSS) mas não faz nada
   };
 
+  // ==================== FUNÇÃO AUXILIAR: Formatar tempo ====================
+  // Converte segundos em formato MM:SS (ex: 14:32)
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
+  // ==================== VALIDAÇÃO: Se não há match ou enigma, não renderiza ====================
   if (!match || !currentPuzzle) {
     return null;
   }
 
+  // ==================== RENDERIZAÇÃO ====================
   return (
     <div className="min-h-screen bg-black text-white flex flex-col px-4 py-8">
       {/* Background effect - horizontal scan lines */}
@@ -122,6 +130,7 @@ export default function Puzzle() {
         }} />
       </div>
 
+      {/* ==================== ESTILOS GLOBAIS ==================== */}
       <style>{`
         @keyframes scan {
           0% { transform: translateY(0); }
@@ -136,7 +145,8 @@ export default function Puzzle() {
         }
       `}</style>
 
-      {/* Timer - only visible in hard mode */}
+      {/* ==================== TIMER (Modo Difícil) ==================== */}
+      {/* Só aparece em modo HARD, fica vermelho quando faltam menos de 60 segundos */}
       {mode === 'hard' && (
         <div className={`fixed top-4 right-4 text-2xl font-bold tracking-widest z-50 ${isTimeUp ? 'pulse-warning' : ''}`} style={{
           fontFamily: "'IBM Plex Mono', monospace",
@@ -147,29 +157,32 @@ export default function Puzzle() {
         </div>
       )}
 
-      {/* Main content */}
+      {/* ==================== CONTEÚDO PRINCIPAL ==================== */}
       <div className="relative z-10 max-w-2xl w-full mx-auto flex-1 flex flex-col justify-center">
-        {/* Progress indicator */}
+        
+        {/* ==================== INDICADOR DE PROGRESSO ==================== */}
         <div className="mb-12 text-center">
+          {/* Slug do enigma atual */}
           <p className="text-xs tracking-widest mb-4" style={{
             fontFamily: "'Space Mono', monospace",
             color: 'rgba(255,255,255,0.6)'
           }}>
             ENIGMA: {slug?.toUpperCase()}
           </p>
-          
-          {/* Progress bar */}
+
+          {/* Barra de progresso visual */}
           <div className="h-1 bg-gray-800 mb-8">
             <div 
               className="h-full bg-white transition-all duration-300"
               style={{
-                width: `${((completedPuzzles.size + 1) / Object.keys(PUZZLES_BY_SLUG).length) * 100}%`
+                // Calcula a porcentagem de enigmas resolvidos
+                width: `${((completedPuzzles.size + 1) / ENIGMAS_LISTA.length) * 100}%`
               }}
             />
           </div>
         </div>
 
-        {/* Puzzle title */}
+        {/* ==================== TÍTULO DO ENIGMA ==================== */}
         <h1 className="text-4xl md:text-5xl font-bold mb-8 text-center" style={{
           fontFamily: "'IBM Plex Mono', monospace",
           letterSpacing: '-0.02em',
@@ -178,10 +191,10 @@ export default function Puzzle() {
           {currentPuzzle.title}
         </h1>
 
-        {/* Divider */}
+        {/* ==================== DIVISOR VISUAL ==================== */}
         <div className="h-px bg-white my-8 mx-auto w-32" />
 
-        {/* Puzzle question */}
+        {/* ==================== TEXTO DO ENIGMA ==================== */}
         <p className="text-base md:text-lg text-center mb-12" style={{
           fontFamily: "'Space Mono', monospace",
           letterSpacing: '0.05em',
@@ -191,8 +204,9 @@ export default function Puzzle() {
           {currentPuzzle.question}
         </p>
 
-        {/* Input form */}
+        {/* ==================== FORMULÁRIO DE RESPOSTA ==================== */}
         <form onSubmit={handleSubmit} className="flex flex-col gap-4 mb-8">
+          {/* Label */}
           <label className="text-sm" style={{
             fontFamily: "'Space Mono', monospace",
             letterSpacing: '0.05em',
@@ -200,7 +214,8 @@ export default function Puzzle() {
           }}>
             INSIRA A SENHA
           </label>
-          
+
+          {/* Input de senha */}
           <input
             type="password"
             value={userAnswer}
@@ -214,7 +229,8 @@ export default function Puzzle() {
               textTransform: 'uppercase'
             }}
           />
-          
+
+          {/* Botão de envio */}
           <button
             type="submit"
             disabled={isCorrect}
@@ -231,7 +247,7 @@ export default function Puzzle() {
           </button>
         </form>
 
-        {/* Hint button */}
+        {/* ==================== BOTÃO DE DICA ==================== */}
         <div className="flex justify-center gap-4">
           <button
             onClick={() => setShowHint(!showHint)}
@@ -246,7 +262,7 @@ export default function Puzzle() {
           </button>
         </div>
 
-        {/* Hint display */}
+        {/* ==================== EXIBIÇÃO DE DICA ==================== */}
         {showHint && (
           <div className="mt-8 p-4 border border-white bg-gray-900" style={{
             fontFamily: "'Space Mono', monospace",
@@ -257,13 +273,13 @@ export default function Puzzle() {
           </div>
         )}
 
-        {/* Completed puzzles indicator */}
+        {/* ==================== CONTADOR DE ENIGMAS RESOLVIDOS ==================== */}
         {completedPuzzles.size > 0 && (
           <div className="mt-12 text-center text-xs" style={{
             fontFamily: "'Space Mono', monospace",
             color: 'rgba(255,255,255,0.4)'
           }}>
-            <p>ENIGMAS RESOLVIDOS: {completedPuzzles.size} / {Object.keys(PUZZLES_BY_SLUG).length}</p>
+            <p>ENIGMAS RESOLVIDOS: {completedPuzzles.size} / {ENIGMAS_LISTA.length}</p>
           </div>
         )}
       </div>
