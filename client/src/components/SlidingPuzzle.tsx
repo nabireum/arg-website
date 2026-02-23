@@ -114,6 +114,8 @@ export default function SlidingPuzzle({ imageUrl, gridSize, onComplete }: Slidin
 
   // ==================== RENDERIZAÇÃO ====================
   const tileSize = 100 / gridSize;
+  // Tamanho dinâmico do grid baseado em gridSize
+  const gridPixelSize = gridSize === 3 ? 300 : 400;
 
   // Não renderizar até o puzzle estar inicializado
   if (tiles.length === 0) {
@@ -146,8 +148,8 @@ export default function SlidingPuzzle({ imageUrl, gridSize, onComplete }: Slidin
       <div
         className="relative bg-black border-2 border-white"
         style={{
-          width: '400px',
-          height: '400px',
+          width: `${gridPixelSize}px`,
+          height: `${gridPixelSize}px`,
           display: 'grid',
           gridTemplateColumns: `repeat(${gridSize}, 1fr)`,
           gap: '2px',
