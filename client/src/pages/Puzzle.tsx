@@ -74,19 +74,7 @@ export default function Puzzle() {
               </span>
             </div>
           )}
-          <p className="text-xs tracking-widest mb-4" style={{
-            fontFamily: "'Space Mono', monospace",
-            color: 'rgba(255,255,255,0.6)'
-          }}>
-            ENIGMA: {slug?.toUpperCase()}
-          </p>
-          <div className="h-1 bg-gray-800 mb-8">
-            <div
-              className="h-full bg-white transition-all duration-300"
-              style={{ width: `${((completedPuzzles.size + 1) / ENIGMAS_LISTA.length) * 100}%` }}
-            />
-          </div>
-        </div>
+          
 
         {/* Title */}
         <h1 className="text-4xl md:text-5xl font-bold mb-8 text-center" style={{
