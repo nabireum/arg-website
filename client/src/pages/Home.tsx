@@ -69,7 +69,7 @@ export default function Home() {
             }}
           >
             <span className="relative z-10 block">
-              Modo: Normal
+              DEVENEMENTIEL
             </span>
             <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-100" style={{
               boxShadow: '0 0 20px rgba(255,255,255,0.5), inset 0 0 20px rgba(255,255,255,0.1)'
@@ -94,7 +94,7 @@ export default function Home() {
             }}
           >
             <span className="relative z-10 block">
-              Modo: Difícil
+              GOLDREAMZ
             </span>
             <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-100" style={{
               boxShadow: '0 0 20px rgba(255,255,255,0.5), inset 0 0 20px rgba(255,255,255,0.1)'
