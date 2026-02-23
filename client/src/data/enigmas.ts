@@ -21,7 +21,7 @@ export const ENIGMAS_LISTA: Enigma[] = [
     title: 'PASSARINHO AZUL',
     question: `A Primeira vez. Você se lembra?`,
     hint: 'Se você não estava presente, pode vasculhar as memórias digitando uma hashtag especifica.',
-    answer: 'FarofaDaBlythe',
+    answer: 'FAROFADABLYTHE',
     nextSlug: null,
   },
 ];
