@@ -22,8 +22,16 @@ export const ENIGMAS_LISTA: Enigma[] = [
     question: `A Primeira vez. Você se lembra?`,
     hint: 'Se você não estava presente, pode vasculhar as memórias digitando uma hashtag especifica.',
     answer: 'FAROFADABLYTHE',
-    nextSlug: null,
+    nextSlug: 'amongus',
   },
+  {
+slug: 'amongus',
+title: 'QUEMSOUEU?',
+question: 🍍,📚,🎧???,
+hint: 'Na primeira vez, pensou ser pequeno. Na segunda, nem precisou falar. Na última, disse ruídos. Quem foi ele?',
+answer: 'IMPOSTOR',
+nextSlug: null,
+},
 ];
 
 export const ENIGMAS_MAP: Record<string, Enigma> = ENIGMAS_LISTA.reduce(
