@@ -19,8 +19,8 @@ export const ENIGMAS_LISTA: Enigma[] = [
   {
     slug: 'festa',
     title: '',
-    question: `Monte o quebra-cabeça para revelar a mensagem oculta. Clique nas peças para deslizá-las. Quando terminar, digite a resposta que você vê na imagem.`,
-    hint: 'Procure pela data e evento mencionados na imagem',
+    question: `A Primeira vez. Você se lembra?`,
+    hint: 'Se você não estava presente, pode vasculhar as memórias digitando uma hashtag especifica.',
     answer: 'FarofaDaBlythe',
     nextSlug: null,
   },
