@@ -210,7 +210,7 @@ export default function Puzzle() {
           <div className="mb-12 flex justify-center">
             <SlidingPuzzle 
               imageUrl="/puzzle-festa.png"
-              gridSize={5}
+              gridSize={3}
             />
           </div>
         )}
