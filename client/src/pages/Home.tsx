@@ -2,24 +2,10 @@ import { useGame } from '@/contexts/GameContext';
 import { useLocation } from 'wouter';
 import { useEffect } from 'react';
 
-/**
- * Home Page - ARG Cyberpunk Dystopian Style
- * 
- * Design Philosophy: Minimalismo Cibernético Distópico
- * - Tipografia: IBM Plex Mono (títulos) + Space Mono (corpo)
- * - Cores: Preto absoluto + branco puro
- * - Efeitos: Glitch, tremor, contraste extremo
- * - Layout: Centralizado verticalmente, assimétrico horizontalmente
- * 
- * Contexto: Danica Balian escondeu emails com informações sobre seu desaparecimento.
- * O jogador precisa provar que é de confiança resolvendo enigmas para acessar a verdade.
- */
-
 export default function Home() {
   const { startGame, mode } = useGame();
   const [, navigate] = useLocation();
 
-  // Se o jogo já começou, redireciona para o primeiro enigma
   useEffect(() => {
     if (mode) {
       navigate('/cofre');
@@ -32,7 +18,6 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center px-4">
-      {/* Background effect - horizontal scan lines */}
       <div className="fixed inset-0 pointer-events-none opacity-5">
         <div className="absolute inset-0" style={{
           backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,.03) 2px, rgba(255,255,255,.03) 4px)',
@@ -53,10 +38,7 @@ export default function Home() {
           animation: flicker 0.15s infinite;
         }
       `}</style>
-
-      {/* Main content */}
       <div className="relative z-10 max-w-2xl w-full">
-        {/* Title - Empty for mystery */}
         <div className="mb-16 text-center">
           <h1 className="text-6xl md:text-7xl font-bold mb-4 tracking-tighter" style={{
             fontFamily: "'IBM Plex Mono', monospace",
@@ -64,10 +46,7 @@ export default function Home() {
             letterSpacing: '-0.02em',
             minHeight: '4rem'
           }}>
-            {/* Empty - mystery element */}
           </h1>
-          
-          {/* Divider line */}
           <div className="h-px bg-white my-8 mx-auto w-32" />
           
           <p className="text-sm md:text-base tracking-widest mb-12" style={{
@@ -77,10 +56,7 @@ export default function Home() {
             A PRIMEIRA ESCOLHA.
           </p>
         </div>
-
-        {/* Mode selection buttons */}
         <div className="flex flex-col gap-6 md:gap-8">
-          {/* Normal Mode Button */}
           <button
             onClick={() => handleModeSelect('normal')}
             className="group relative px-8 py-6 border-2 border-white bg-black text-white transition-all duration-100 hover:bg-white hover:text-black active:scale-95"
@@ -95,13 +71,10 @@ export default function Home() {
             <span className="relative z-10 block">
               Modo: Normal
             </span>
-            {/* Hover glow effect */}
             <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-100" style={{
               boxShadow: '0 0 20px rgba(255,255,255,0.5), inset 0 0 20px rgba(255,255,255,0.1)'
             }} />
           </button>
-
-          {/* Difficulty indicator */}
           <div className="text-center text-xs md:text-sm" style={{
             fontFamily: "'Space Mono', monospace",
             letterSpacing: '0.05em',
@@ -109,8 +82,6 @@ export default function Home() {
           }}>
             RESOLVA NO SEU RITMO
           </div>
-
-          {/* Hard Mode Button */}
           <button
             onClick={() => handleModeSelect('hard')}
             className="group relative px-8 py-6 border-2 border-white bg-black text-white transition-all duration-100 hover:bg-white hover:text-black active:scale-95"
@@ -125,13 +96,10 @@ export default function Home() {
             <span className="relative z-10 block">
               Modo: Difícil
             </span>
-            {/* Hover glow effect */}
             <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-100" style={{
               boxShadow: '0 0 20px rgba(255,255,255,0.5), inset 0 0 20px rgba(255,255,255,0.1)'
             }} />
           </button>
-
-          {/* Hard mode warning */}
           <div className="text-center text-xs md:text-sm" style={{
             fontFamily: "'Space Mono', monospace",
             letterSpacing: '0.05em',
@@ -140,8 +108,6 @@ export default function Home() {
             RESOLVA TUDO ANTES DO TEMPO ACABAR (e ganhe um BÔNUS)
           </div>
         </div>
-
-        {/* Footer message */}
         <div className="mt-16 text-center text-xs" style={{
           fontFamily: "'Space Mono', monospace",
           letterSpacing: '0.05em',
