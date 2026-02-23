@@ -4,21 +4,6 @@ import { obterEnigma, validarResposta, ENIGMAS_LISTA } from '@/data/enigmas';
 import SlidingPuzzle from '@/components/SlidingPuzzle';
 import { useGame } from '@/contexts/GameContext';
 
-/**
- * PUZZLE PAGE - Página de Enigmas do ARG
- * 
- * Design Philosophy: Minimalismo Cibernético Distópico
- * - Exibe um enigma por vez
- * - Timer visível no topo em modo HARD
- * - Sistema de navegação entre enigmas com slugs personalizados
- * 
- * COMO FUNCIONA:
- * 1. A URL contém o slug do enigma (ex: /cofre, /arquivo)
- * 2. O componente busca o enigma no arquivo enigmas.ts
- * 3. O jogador insere a resposta e clica em ENVIAR
- * 4. Se correto, vai para o próximo enigma
- * 5. Se for o último, volta para a página inicial
- */
 
 export default function Puzzle() {
   // ==================== HOOKS DE ROTEAMENTO ====================
