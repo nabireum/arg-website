@@ -6,9 +6,9 @@ O sistema de enigmas do ARG usa **slugs personalizados** em vez de números. Cad
 
 **Exemplo de URL:**
 ```
-www.segredobalian.com/cofre
-www.segredobalian.com/arquivo
-www.segredobalian.com/segredo
+www.segredobalian.space/cofre
+www.segredobalian.space/arquivo
+www.segredobalian.space/segredo
 ```
 
 O slug "cofre" é uma dica - o jogador já resolveu um enigma anterior cuja resposta era a senha de um cofre.
@@ -150,10 +150,10 @@ Para testar rapidamente:
 Quando você adiciona um novo enigma com slug `misterio`, a URL será:
 
 ```
-www.segredobalian.com/misterio
+www.segredobalian.space/misterio
 ```
 
-O domínio `www.segredobalian.com` é configurado no seu hosting (Manus ou outro). O slug é a parte que você controla.
+O domínio `www.segredobalian.space` é configurado no seu hosting (Manus ou outro). O slug é a parte que você controla.
 
 ---
 
