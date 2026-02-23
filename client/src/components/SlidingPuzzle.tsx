@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 
 interface SlidingPuzzleProps {
   imageUrl: string;
@@ -7,92 +7,16 @@ interface SlidingPuzzleProps {
 }
 
 export default function SlidingPuzzle({ imageUrl, gridSize, onComplete }: SlidingPuzzleProps) {
-  const [tiles, setTiles] = useState<(string | null)[]>([]);
-  const [originalTiles, setOriginalTiles] = useState<(string | null)[]>([]);
+  const [tiles, setTiles] = useState<number[]>([]);
   const [moves, setMoves] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const totalTiles = gridSize * gridSize;
   const emptyTileId = totalTiles - 1;
 
   useEffect(() => {
-    const loadAndProcessImage = async () => {
-      try {
-        const img = new Image();
-        img.crossOrigin = 'anonymous';
-        img.onload = () => {
-          const canvas = canvasRef.current;
-          if (!canvas) return;
-
-          const ctx = canvas.getContext('2d');
-          if (!ctx) return;
-
-          // Redimensionar para um quadrado perfeito para facilitar o corte
-          const size = Math.min(img.width, img.height);
-          canvas.width = size;
-          canvas.height = size;
-          
-          // Desenhar a imagem centralizada
-          ctx.drawImage(
-            img,
-            (img.width - size) / 2,
-            (img.height - size) / 2,
-            size,
-            size,
-            0,
-            0,
-            size,
-            size
-          );
-
-          const tileWidth = size / gridSize;
-          const tileHeight = size / gridSize;
-
-          const tileImages: (string | null)[] = [];
-          for (let i = 0; i < totalTiles; i++) {
-            if (i === emptyTileId) {
-              tileImages.push(null);
-            } else {
-              const row = Math.floor(i / gridSize);
-              const col = i % gridSize;
-
-              const tileCanvas = document.createElement('canvas');
-              tileCanvas.width = tileWidth;
-              tileCanvas.height = tileHeight;
-              const tileCtx = tileCanvas.getContext('2d');
-
-              if (tileCtx) {
-                tileCtx.drawImage(
-                  canvas,
-                  col * tileWidth,
-                  row * tileHeight,
-                  tileWidth,
-                  tileHeight,
-                  0,
-                  0,
-                  tileWidth,
-                  tileHeight
-                );
-                tileImages.push(tileCanvas.toDataURL());
-              }
-            }
-          }
-
-          setOriginalTiles([...tileImages]);
-          setTiles(shufflePuzzle([...tileImages]));
-          setIsLoading(false);
-        };
-        img.src = imageUrl;
-      } catch (error) {
-        console.error('Erro ao carregar imagem:', error);
-        setIsLoading(false);
-      }
-    };
-
-    loadAndProcessImage();
-  }, [imageUrl, gridSize, totalTiles, emptyTileId]);
+    initializePuzzle();
+  }, [gridSize]);
 
   const getNeighbors = (index: number): number[] => {
     const neighbors: number[] = [];
@@ -105,10 +29,10 @@ export default function SlidingPuzzle({ imageUrl, gridSize, onComplete }: Slidin
     return neighbors;
   };
 
-  const shufflePuzzle = (initialTiles: (string | null)[]): (string | null)[] => {
+  const shufflePuzzle = (initialTiles: number[]) => {
     const shuffled = [...initialTiles];
-    // Realizar movimentos válidos para garantir que o puzzle seja resolvível
-    let emptyIndex = shuffled.indexOf(null);
+    let emptyIndex = shuffled.indexOf(emptyTileId);
+    
     for (let i = 0; i < 200; i++) {
       const neighbors = getNeighbors(emptyIndex);
       const randomNeighbor = neighbors[Math.floor(Math.random() * neighbors.length)];
@@ -119,20 +43,19 @@ export default function SlidingPuzzle({ imageUrl, gridSize, onComplete }: Slidin
   };
 
   const initializePuzzle = () => {
-    if (originalTiles.length > 0) {
-      setTiles(shufflePuzzle([...originalTiles]));
-      setMoves(0);
-      setIsComplete(false);
-    }
+    const initialTiles = Array.from({ length: totalTiles }, (_, i) => i);
+    setTiles(shufflePuzzle([...initialTiles]));
+    setMoves(0);
+    setIsComplete(false);
   };
 
-  const isPuzzleComplete = (currentTiles: (string | null)[]): boolean => {
-    return currentTiles.every((tile, index) => tile === originalTiles[index]);
+  const isPuzzleComplete = (currentTiles: number[]): boolean => {
+    return currentTiles.every((tile, index) => tile === index);
   };
 
   const handleTileClick = (index: number) => {
-    if (isComplete || isLoading) return;
-    const emptyIndex = tiles.indexOf(null);
+    if (isComplete) return;
+    const emptyIndex = tiles.indexOf(emptyTileId);
     const neighbors = getNeighbors(emptyIndex);
     if (neighbors.includes(index)) {
       const newTiles = [...tiles];
@@ -146,17 +69,15 @@ export default function SlidingPuzzle({ imageUrl, gridSize, onComplete }: Slidin
     }
   };
 
-  const gridPixelSize = 300; // Tamanho fixo para consistência
-  const tilePixelSize = (gridPixelSize - (gridSize * 2)) / gridSize;
+  const tileSize = 100 / gridSize;
+  const gridPixelSize = 300;
 
-  if (isLoading || tiles.length === 0) {
+  if (tiles.length === 0) {
     return <div className="text-center text-white">Carregando puzzle...</div>;
   }
 
   return (
     <div className="flex flex-col items-center gap-6">
-      <canvas ref={canvasRef} style={{ display: 'none' }} />
-
       <div className="text-center">
         <p className="text-sm" style={{
           fontFamily: "'Space Mono', monospace",
@@ -188,8 +109,10 @@ export default function SlidingPuzzle({ imageUrl, gridSize, onComplete }: Slidin
           backgroundColor: '#000000',
         }}
       >
-        {tiles.map((tileImage, index) => {
-          const isEmpty = tileImage === null;
+        {tiles.map((tileId, index) => {
+          const isEmpty = tileId === emptyTileId;
+          const correctRow = Math.floor(tileId / gridSize);
+          const correctCol = tileId % gridSize;
 
           return (
             <div
@@ -199,14 +122,12 @@ export default function SlidingPuzzle({ imageUrl, gridSize, onComplete }: Slidin
                 isEmpty ? 'bg-black' : 'bg-gray-800 hover:bg-gray-700 border border-white'
               }`}
               style={{
-                backgroundImage: isEmpty ? 'none' : `url('${tileImage}')`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
+                backgroundImage: isEmpty ? 'none' : `url('${imageUrl}')`,
+                backgroundPosition: `${correctCol * tileSize}% ${correctRow * tileSize}%`,
+                backgroundSize: `${gridSize * 100}% ${gridSize * 100}%`,
                 backgroundRepeat: 'no-repeat',
                 cursor: isEmpty ? 'default' : 'pointer',
                 opacity: isEmpty ? 0.3 : 1,
-                width: '100%',
-                height: '100%',
               }}
             />
           );
