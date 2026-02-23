@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react';
 
 interface SlidingPuzzleProps {
-  imageUrl: string;
   gridSize: number;
   onComplete?: () => void;
 }
 
-export default function SlidingPuzzle({ imageUrl, gridSize, onComplete }: SlidingPuzzleProps) {
+export default function SlidingPuzzle({ gridSize = 3, onComplete }: SlidingPuzzleProps) {
   const [tiles, setTiles] = useState<number[]>([]);
   const [moves, setMoves] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
@@ -32,7 +31,7 @@ export default function SlidingPuzzle({ imageUrl, gridSize, onComplete }: Slidin
   const shufflePuzzle = (initialTiles: number[]) => {
     const shuffled = [...initialTiles];
     let emptyIndex = shuffled.indexOf(emptyTileId);
-    
+
     for (let i = 0; i < 200; i++) {
       const neighbors = getNeighbors(emptyIndex);
       const randomNeighbor = neighbors[Math.floor(Math.random() * neighbors.length)];
@@ -69,8 +68,11 @@ export default function SlidingPuzzle({ imageUrl, gridSize, onComplete }: Slidin
     }
   };
 
-  const tileSize = 100 / gridSize;
-  const gridPixelSize = 300;
+  // Proporção original da imagem: 426x603 (142x201 por tile)
+  const tileWidth = 142;
+  const tileHeight = 201;
+  const gridPixelWidth = tileWidth * gridSize;
+  const gridPixelHeight = tileHeight * gridSize;
 
   if (tiles.length === 0) {
     return <div className="text-center text-white">Carregando puzzle...</div>;
@@ -98,36 +100,36 @@ export default function SlidingPuzzle({ imageUrl, gridSize, onComplete }: Slidin
       </div>
 
       <div
-        className="relative bg-black border-2 border-white"
         style={{
-          width: `${gridPixelSize}px`,
-          height: `${gridPixelSize}px`,
+          width: `${gridPixelWidth}px`,
+          height: `${gridPixelHeight}px`,
           display: 'grid',
-          gridTemplateColumns: `repeat(${gridSize}, 1fr)`,
+          gridTemplateColumns: `repeat(${gridSize}, ${tileWidth}px)`,
+          gridTemplateRows: `repeat(${gridSize}, ${tileHeight}px)`,
           gap: '2px',
-          padding: '2px',
           backgroundColor: '#000000',
+          border: '2px solid white',
         }}
       >
         {tiles.map((tileId, index) => {
           const isEmpty = tileId === emptyTileId;
-          const correctRow = Math.floor(tileId / gridSize);
-          const correctCol = tileId % gridSize;
 
           return (
             <div
               key={index}
               onClick={() => handleTileClick(index)}
-              className={`cursor-pointer transition-all duration-200 ${
-                isEmpty ? 'bg-black' : 'bg-gray-800 hover:bg-gray-700 border border-white'
-              }`}
               style={{
-                backgroundImage: isEmpty ? 'none' : `url('${imageUrl}')`,
-                backgroundPosition: `${correctCol * tileSize}% ${correctRow * tileSize}%`,
-                backgroundSize: `${gridSize * 100}% ${gridSize * 100}%`,
+                width: `${tileWidth}px`,
+                height: `${tileHeight}px`,
+                backgroundImage: isEmpty ? 'none' : `url('/puzzle-tiles/tile_${tileId}.png')`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
                 backgroundRepeat: 'no-repeat',
                 cursor: isEmpty ? 'default' : 'pointer',
                 opacity: isEmpty ? 0.3 : 1,
+                backgroundColor: '#000000',
+                border: isEmpty ? 'none' : '1px solid rgba(255,255,255,0.3)',
+                transition: 'opacity 0.2s',
               }}
             />
           );

@@ -112,7 +112,7 @@ export default function Puzzle() {
         {/* Sliding Puzzle (enigma 'festa') */}
         {slug === 'festa' && (
           <div className="mb-12 flex justify-center">
-            <SlidingPuzzle imageUrl="/puzzle-festa.png" gridSize={3} />
+            <SlidingPuzzle gridSize={3} />
           </div>
         )}
 
