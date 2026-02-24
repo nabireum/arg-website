@@ -45,7 +45,7 @@ export default function Home() {
           className="mb-4 text-xs md:text-sm tracking-[0.3em] text-white/70"
           style={{ fontFamily: "'Space Mono', monospace" }}
         >
-          CONTAGEM REGRESSIVA
+          Nos encontraremos de novo.
         </p>
         <h1
           className="text-4xl md:text-7xl font-bold tracking-wider"
