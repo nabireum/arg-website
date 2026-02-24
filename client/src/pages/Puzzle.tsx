@@ -62,42 +62,25 @@ export default function Puzzle() {
   return (
     <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center px-4 py-16">
       <div className="relative z-10 max-w-2xl w-full">
-        {/* Header */}
-        <div className="mb-12">
-          {mode === 'hard' && (
-            <div className="text-center mb-4">
-              <span className="text-2xl font-bold" style={{
-                fontFamily: "'IBM Plex Mono', monospace",
-                color: timeRemaining < 60 ? '#ef4444' : 'white'
-              }}>
-                {formatTime(timeRemaining)}
-              </span>
-            </div>
-          )}
-          <p className="text-xs tracking-widest mb-4" style={{
-            fontFamily: "'Space Mono', monospace",
-            color: 'rgba(255,255,255,0.6)'
-          }}>
-            ENIGMA: {slug?.toUpperCase()}
-          </p>
-          <div className="h-1 bg-gray-800 mb-8">
-            <div
-              className="h-full bg-white transition-all duration-300"
-              style={{ width: `${((completedPuzzles.size + 1) / ENIGMAS_LISTA.length) * 100}%` }}
-            />
+        {/* Header - Timer only */}
+        {mode === 'hard' && (
+          <div className="text-center mb-12">
+            <span className="text-2xl font-bold" style={{
+              fontFamily: "'IBM Plex Mono', monospace",
+              color: timeRemaining < 60 ? '#ef4444' : 'white'
+            }}>
+              {formatTime(timeRemaining)}
+            </span>
           </div>
+        )}
+
+        {/* Progress bar */}
+        <div className="h-1 bg-gray-800 mb-12">
+          <div
+            className="h-full bg-white transition-all duration-300"
+            style={{ width: `${((completedPuzzles.size + 1) / ENIGMAS_LISTA.length) * 100}%` }}
+          />
         </div>
-
-        {/* Title */}
-        <h1 className="text-4xl md:text-5xl font-bold mb-8 text-center" style={{
-          fontFamily: "'IBM Plex Mono', monospace",
-          letterSpacing: '-0.02em',
-          textShadow: '2px 2px 0px rgba(255,255,255,0.1)'
-        }}>
-          {currentPuzzle.title}
-        </h1>
-
-        <div className="h-px bg-white my-8 mx-auto w-32" />
 
         {/* Question */}
         {slug === 'amongus' ? (
