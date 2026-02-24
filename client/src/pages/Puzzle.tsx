@@ -100,14 +100,26 @@ export default function Puzzle() {
         <div className="h-px bg-white my-8 mx-auto w-32" />
 
         {/* Question */}
-        <p className="text-base md:text-lg text-center mb-12" style={{
-          fontFamily: "'Space Mono', monospace",
-          letterSpacing: '0.05em',
-          lineHeight: '1.8',
-          whiteSpace: 'pre-wrap'
-        }}>
-          {currentPuzzle.question}
-        </p>
+        {slug === 'amongus' ? (
+          <div className="text-center mb-12">
+            <div className="flex justify-center gap-8 mb-8">
+              <span style={{ fontSize: '120px' }}>🍍</span>
+              <span style={{ fontSize: '80px', marginTop: '20px' }}>,</span>
+              <span style={{ fontSize: '120px' }}>📚</span>
+              <span style={{ fontSize: '80px', marginTop: '20px' }}>,</span>
+              <span style={{ fontSize: '120px' }}>🎧</span>
+            </div>
+          </div>
+        ) : (
+          <p className="text-base md:text-lg text-center mb-12" style={{
+            fontFamily: "'Space Mono', monospace",
+            letterSpacing: '0.05em',
+            lineHeight: '1.8',
+            whiteSpace: 'pre-wrap'
+          }}>
+            {currentPuzzle.question}
+          </p>
+        )}
 
         {/* Sliding Puzzle (enigma 'festa') */}
         {slug === 'festa' && (

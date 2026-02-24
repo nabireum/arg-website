@@ -25,13 +25,13 @@ export const ENIGMAS_LISTA: Enigma[] = [
     nextSlug: 'amongus',
   },
   {
-slug: 'amongus',
-title: 'QUEMSOUEU?',
-question: '🍍,📚,🎧'
-hint: 'Na primeira vez, pensou ser pequeno. Na segunda, nem precisou falar. Na última, disse ruídos. Quem ele era?',
-answer: 'IMPOSTOR',
-nextSlug: null,
-},
+    slug: 'amongus',
+    title: 'QUEMSOUEU?',
+    question: '🍍,📚,🎧',
+    hint: 'Na primeira vez, pensou ser pequeno. Na segunda, nem precisou falar. Na última, disse ruídos. Quem ele era?',
+    answer: 'IMPOSTOR',
+    nextSlug: null,
+  },
 ];
 
 export const ENIGMAS_MAP: Record<string, Enigma> = ENIGMAS_LISTA.reduce(
