@@ -5,7 +5,7 @@ import SlidingPuzzle from '@/components/SlidingPuzzle';
 import { useGame } from '@/contexts/GameContext';
 
 export default function Puzzle() {
-  const [match, params] = useRoute('/:slug');
+  const [match, params] = useRoute('/room1/:slug');
   const [, navigate] = useLocation();
   const { mode, timeRemaining, isTimeUp, completedPuzzles, markPuzzleComplete, endGame } = useGame();
 
@@ -17,18 +17,18 @@ export default function Puzzle() {
   const currentPuzzle = slug ? obterEnigma(slug) : null;
 
   useEffect(() => {
-    if (!mode) navigate('/');
+    if (!mode) navigate('/room1');
   }, [mode, navigate]);
 
   useEffect(() => {
     if (isTimeUp && mode === 'hard') {
       endGame();
-      navigate('/');
+      navigate('/room1');
     }
   }, [isTimeUp, mode, endGame, navigate]);
 
   useEffect(() => {
-    if (match && !currentPuzzle) navigate('/');
+    if (match && !currentPuzzle) navigate('/room1');
   }, [match, currentPuzzle, navigate]);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -42,10 +42,10 @@ export default function Puzzle() {
           setUserAnswer('');
           setShowHint(false);
           setIsCorrect(false);
-          navigate(`/${proximoEnigma}`);
+          navigate(`/room1/${proximoEnigma}`);
         } else {
           endGame();
-          navigate('/');
+          navigate('/room1');
         }
       }, 1000);
     }
