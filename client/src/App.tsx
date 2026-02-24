@@ -7,6 +7,7 @@ import { GameProvider } from "./contexts/GameContext";
 import Home from "./pages/Home";
 import Puzzle from "./pages/Puzzle";
 import Room1 from "./pages/Room1";
+import LegacyPuzzleRedirect from "./pages/LegacyPuzzleRedirect";
 
 function Router() {
   return (
@@ -14,6 +15,7 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/room1" component={Room1} />
       <Route path="/room1/:slug" component={Puzzle} />
+      <Route path="/:slug" component={LegacyPuzzleRedirect} />
       <Route component={NotFound} />
     </Switch>
   );
