@@ -28,7 +28,7 @@ export const ENIGMAS_LISTA: Enigma[] = [
 slug: 'amongus',
 title: 'QUEMSOUEU?',
 question: 🍍,📚,🎧???,
-hint: 'Na primeira vez, pensou ser pequeno. Na segunda, nem precisou falar. Na última, disse ruídos. Quem foi ele?',
+hint: 'Na primeira vez, pensou ser pequeno. Na segunda, nem precisou falar. Na última, disse ruídos. Quem ele era?',
 answer: 'IMPOSTOR',
 nextSlug: null,
 },
