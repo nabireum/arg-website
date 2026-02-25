@@ -1,3 +1,8 @@
+import { useEffect, useMemo, useRef, useState } from 'react';
+
+const TARGET_DATE = new Date('2026-03-01T19:00:00-03:00').getTime();
+const INSPECT_MESSAGE =
+  'Você achou mesmo que eu iria esconder algo aqui agora? Eu não sou estupida, acho que já deve ter percebido. Se quiser mesmo saber meu segredo, então aguarde mais um pouco. Acho que vamos nos encontrar aqui muito em breve...';
 import { useEffect, useMemo, useState } from 'react';
 
 const TARGET_DATE = new Date('2026-02-28T20:00:00-03:00').getTime();
@@ -21,6 +26,7 @@ function getTimeLeft() {
 
 export default function Home() {
   const [timeLeft, setTimeLeft] = useState(getTimeLeft);
+  const homeRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -28,6 +34,19 @@ export default function Home() {
     }, 1000);
 
     return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    if (!homeRef.current) return;
+
+    const commentNode = document.createComment(` ${INSPECT_MESSAGE} `);
+    homeRef.current.prepend(commentNode);
+
+    return () => {
+      if (homeRef.current?.contains(commentNode)) {
+        homeRef.current.removeChild(commentNode);
+      }
+    };
   }, []);
 
   const countdown = useMemo(() => {
@@ -39,6 +58,21 @@ export default function Home() {
   }, [timeLeft]);
 
   return (
+    <div
+      ref={homeRef}
+      className="min-h-screen bg-black text-white flex items-center justify-center px-4 relative overflow-hidden"
+    >
+      <p
+        className="absolute top-8 md:top-10 left-1/2 -translate-x-1/2 text-4xl md:text-7xl font-bold tracking-[0.2em] select-none pointer-events-none"
+        style={{
+          fontFamily: "'IBM Plex Mono', monospace",
+          opacity: 0.04,
+          whiteSpace: 'nowrap'
+        }}
+      >
+        ZEYT OEHT NOCIQ
+      </p>
+
     <div className="min-h-screen bg-black text-white flex items-center justify-center px-4">
       <div className="text-center">
         <p
@@ -57,7 +91,7 @@ export default function Home() {
           className="mt-4 text-xs md:text-sm tracking-[0.2em] text-white/60"
           style={{ fontFamily: "'Space Mono', monospace" }}
         >
-          SÁBADO • 28/02/2026 • 20H
+          DOMINGO • 01/03/2026 • 19H
         </p>
       </div>
     </div>
