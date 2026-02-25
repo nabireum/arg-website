@@ -1,121 +1,77 @@
-import { useGame } from '@/contexts/GameContext';
-import { useLocation } from 'wouter';
-import { useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+
+const TARGET_DATE = new Date('2026-02-28T20:00:00-03:00').getTime();
+
+function formatUnit(value: number) {
+  return value.toString().padStart(2, '0');
+}
+
+function getTimeLeft() {
+  const now = Date.now();
+  const diff = Math.max(0, TARGET_DATE - now);
+
+  const totalSeconds = Math.floor(diff / 1000);
+  const days = Math.floor(totalSeconds / 86400);
+  const hours = Math.floor((totalSeconds % 86400) / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  return { diff, days, hours, minutes, seconds };
+}
 
 export default function Home() {
-  const { startGame, mode } = useGame();
-  const [, navigate] = useLocation();
+  const [timeLeft, setTimeLeft] = useState(getTimeLeft);
 
   useEffect(() => {
-    if (mode) {
-      navigate('/cofre');
-    }
-  }, [mode, navigate]);
+    const interval = setInterval(() => {
+      setTimeLeft(getTimeLeft());
+    }, 1000);
 
-  const handleModeSelect = (selectedMode: 'normal' | 'hard') => {
-    startGame(selectedMode);
-  };
+    return () => clearInterval(interval);
+  }, []);
+
+  const countdown = useMemo(() => {
+    if (timeLeft.diff === 0) {
+      return '00:00:00:00';
+    }
+
+    return `${formatUnit(timeLeft.days)}:${formatUnit(timeLeft.hours)}:${formatUnit(timeLeft.minutes)}:${formatUnit(timeLeft.seconds)}`;
+  }, [timeLeft]);
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center px-4">
-      <div className="fixed inset-0 pointer-events-none opacity-5">
-        <div className="absolute inset-0" style={{
-          backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,.03) 2px, rgba(255,255,255,.03) 4px)',
-          animation: 'scan 8s linear infinite'
-        }} />
-      </div>
+    <div className="min-h-screen bg-black text-white flex items-center justify-center px-4 relative overflow-hidden">
+      <p
+        className="absolute top-8 md:top-10 left-1/2 -translate-x-1/2 text-4xl md:text-7xl font-bold tracking-[0.2em] select-none pointer-events-none"
+        style={{
+          fontFamily: "'IBM Plex Mono', monospace",
+          opacity: 0.04,
+          whiteSpace: 'nowrap'
+        }}
+      >
+        ZEYT OEHT NOCIQ
+      </p>
 
-      <style>{`
-        @keyframes scan {
-          0% { transform: translateY(0); }
-          100% { transform: translateY(10px); }
-        }
-        @keyframes flicker {
-          0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; }
-          20%, 24%, 55% { opacity: 0.8; }
-        }
-        .flicker {
-          animation: flicker 0.15s infinite;
-        }
-      `}</style>
-      <div className="relative z-10 max-w-2xl w-full">
-        <div className="mb-16 text-center">
-          <h1 className="text-6xl md:text-7xl font-bold mb-4 tracking-tighter" style={{
-            fontFamily: "'IBM Plex Mono', monospace",
-            textShadow: '2px 2px 0px rgba(255,255,255,0.1)',
-            letterSpacing: '-0.02em',
-            minHeight: '4rem'
-          }}>
-          </h1>
-          <div className="h-px bg-white my-8 mx-auto w-32" />
-          
-          <p className="text-sm md:text-base tracking-widest mb-12" style={{
-            fontFamily: "'Space Mono', monospace",
-            letterSpacing: '0.1em'
-          }}>
-            A PRIMEIRA ESCOLHA.
-          </p>
-        </div>
-        <div className="flex flex-col gap-6 md:gap-8">
-          <button
-            onClick={() => handleModeSelect('normal')}
-            className="group relative px-8 py-6 border-2 border-white bg-black text-white transition-all duration-100 hover:bg-white hover:text-black active:scale-95"
-            style={{
-              fontFamily: "'IBM Plex Mono', monospace",
-              fontSize: '1.25rem',
-              fontWeight: 700,
-              letterSpacing: '0.1em',
-              textTransform: 'uppercase'
-            }}
-          >
-            <span className="relative z-10 block">
-              DEVENEMENTIEL
-            </span>
-            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-100" style={{
-              boxShadow: '0 0 20px rgba(255,255,255,0.5), inset 0 0 20px rgba(255,255,255,0.1)'
-            }} />
-          </button>
-          <div className="text-center text-xs md:text-sm" style={{
-            fontFamily: "'Space Mono', monospace",
-            letterSpacing: '0.05em',
-            color: 'rgba(255,255,255,0.6)'
-          }}>
-            RESOLVA NO SEU RITMO
-          </div>
-          <button
-            onClick={() => handleModeSelect('hard')}
-            className="group relative px-8 py-6 border-2 border-white bg-black text-white transition-all duration-100 hover:bg-white hover:text-black active:scale-95"
-            style={{
-              fontFamily: "'IBM Plex Mono', monospace",
-              fontSize: '1.25rem',
-              fontWeight: 700,
-              letterSpacing: '0.1em',
-              textTransform: 'uppercase'
-            }}
-          >
-            <span className="relative z-10 block">
-              GOLDREAMZ
-            </span>
-            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-100" style={{
-              boxShadow: '0 0 20px rgba(255,255,255,0.5), inset 0 0 20px rgba(255,255,255,0.1)'
-            }} />
-          </button>
-          <div className="text-center text-xs md:text-sm" style={{
-            fontFamily: "'Space Mono', monospace",
-            letterSpacing: '0.05em',
-            color: 'rgba(255,255,255,0.6)'
-          }}>
-            RESOLVA TUDO ANTES DO TEMPO ACABAR (e ganhe um BÔNUS)
-          </div>
-        </div>
-        <div className="mt-16 text-center text-xs" style={{
-          fontFamily: "'Space Mono', monospace",
-          letterSpacing: '0.05em',
-          color: 'rgba(255,255,255,0.4)'
-        }}>
-          <p>AVISO: ALGUMAS VERDADES SÃO PERIGOSAS</p>
-          <p className="mt-2">PROSSIGA POR SUA CONTA E RISCO</p>
-        </div>
+      {/* Você achou mesmo que eu iria esconder algo aqui agora? Eu não sou estupida, acho que já deve ter percebido. Se quiser mesmo saber meu segredo, então aguarde mais um pouco. Acho que vamos nos encontrar aqui muito em breve... */}
+
+      <div className="text-center">
+        <p
+          className="mb-4 text-xs md:text-sm tracking-[0.3em] text-white/70"
+          style={{ fontFamily: "'Space Mono', monospace" }}
+        >
+          CONTAGEM REGRESSIVA
+        </p>
+        <h1
+          className="text-4xl md:text-7xl font-bold tracking-wider"
+          style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+        >
+          {countdown}
+        </h1>
+        <p
+          className="mt-4 text-xs md:text-sm tracking-[0.2em] text-white/60"
+          style={{ fontFamily: "'Space Mono', monospace" }}
+        >
+          SÁBADO • 28/02/2026 • 20H
+        </p>
       </div>
     </div>
   );
