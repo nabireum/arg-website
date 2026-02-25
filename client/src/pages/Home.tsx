@@ -3,6 +3,9 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 const TARGET_DATE = new Date('2026-03-01T19:00:00-03:00').getTime();
 const INSPECT_MESSAGE =
   'Você achou mesmo que eu iria esconder algo aqui agora? Eu não sou estupida, acho que já deve ter percebido. Se quiser mesmo saber meu segredo, então aguarde mais um pouco. Acho que vamos nos encontrar aqui muito em breve...';
+import { useEffect, useMemo, useState } from 'react';
+
+const TARGET_DATE = new Date('2026-02-28T20:00:00-03:00').getTime();
 
 function formatUnit(value: number) {
   return value.toString().padStart(2, '0');
@@ -70,12 +73,13 @@ export default function Home() {
         ZEYT OEHT NOCIQ
       </p>
 
+    <div className="min-h-screen bg-black text-white flex items-center justify-center px-4">
       <div className="text-center">
         <p
           className="mb-4 text-xs md:text-sm tracking-[0.3em] text-white/70"
           style={{ fontFamily: "'Space Mono', monospace" }}
         >
-          CONTAGEM REGRESSIVA
+          Nos encontraremos de novo :).
         </p>
         <h1
           className="text-4xl md:text-7xl font-bold tracking-wider"
