@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 
-const TARGET_DATE = new Date('2026-02-28T20:00:00-03:00').getTime();
+const TARGET_DATE = new Date('2026-03-01T19:00:00-03:00').getTime();
 
 function formatUnit(value: number) {
   return value.toString().padStart(2, '0');
@@ -39,7 +39,13 @@ export default function Home() {
   }, [timeLeft]);
 
   return (
-    <div className="min-h-screen bg-black text-white flex items-center justify-center px-4">
+    <div className="relative min-h-screen bg-black text-white flex items-center justify-center px-4">
+      <p
+        className="absolute top-8 left-1/2 -translate-x-1/2 text-3xl md:text-6xl font-bold tracking-[0.3em] text-white"
+        style={{ fontFamily: "'IBM Plex Mono', monospace", opacity: 0.06 }}
+      >
+        ZEYT OEHT NOCIQ
+      </p>
       <div className="text-center">
         <p
           className="mb-4 text-xs md:text-sm tracking-[0.3em] text-white/70"
@@ -57,7 +63,7 @@ export default function Home() {
           className="mt-4 text-xs md:text-sm tracking-[0.2em] text-white/60"
           style={{ fontFamily: "'Space Mono', monospace" }}
         >
-          SÁBADO • 28/02/2026 • 20H
+          DOMINGO • 01/03/2026 • 19H
         </p>
       </div>
     </div>
