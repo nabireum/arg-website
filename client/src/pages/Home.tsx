@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 const TARGET_DATE = new Date('2026-03-01T19:00:00-03:00').getTime();
+const INSPECT_MESSAGE = "Você achou mesmo que eu iria esconder algo aqui agora? Eu não sou estupida, acho que já deve ter percebido. Se quiser mesmo saber meu segredo, então aguarde mais um pouco. Acho que vamos nos encontrar aqui muito em breve...";
 
 function formatUnit(value: number) {
   return value.toString().padStart(2, '0');
@@ -48,11 +49,11 @@ export default function Home() {
     if (timeLeft.diff === 0) {
       return '00:00:00:00';
     }
-//Você achou mesmo que eu iria esconder algo aqui agora? Eu não sou estupida, acho que já deve ter percebido. Se quiser mesmo saber meu segredo, então aguarde mais um pouco. Acho que vamos nos encontrar aqui muito em breve...
     return `${formatUnit(timeLeft.days)}:${formatUnit(timeLeft.hours)}:${formatUnit(timeLeft.minutes)}:${formatUnit(timeLeft.seconds)}`;
   }, [timeLeft]);
+
   return (
-    <div className="relative min-h-screen bg-black text-white flex items-center justify-center px-4">
+    <div ref={homeRef} className="relative min-h-screen bg-black text-white flex items-center justify-center px-4">
       <p
         className="absolute top-8 left-1/2 -translate-x-1/2 text-3xl md:text-6xl font-bold tracking-[0.3em] text-white"
         style={{ fontFamily: "'IBM Plex Mono', monospace", opacity: 0.06 }}
