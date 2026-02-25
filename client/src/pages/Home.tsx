@@ -1,11 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 const TARGET_DATE = new Date('2026-03-01T19:00:00-03:00').getTime();
-const INSPECT_MESSAGE =
-  'Você achou mesmo que eu iria esconder algo aqui agora? Eu não sou estupida, acho que já deve ter percebido. Se quiser mesmo saber meu segredo, então aguarde mais um pouco. Acho que vamos nos encontrar aqui muito em breve...';
-import { useEffect, useMemo, useState } from 'react';
-
-const TARGET_DATE = new Date('2026-02-28T20:00:00-03:00').getTime();
 
 function formatUnit(value: number) {
   return value.toString().padStart(2, '0');
@@ -53,27 +48,17 @@ export default function Home() {
     if (timeLeft.diff === 0) {
       return '00:00:00:00';
     }
-
+//Você achou mesmo que eu iria esconder algo aqui agora? Eu não sou estupida, acho que já deve ter percebido. Se quiser mesmo saber meu segredo, então aguarde mais um pouco. Acho que vamos nos encontrar aqui muito em breve...
     return `${formatUnit(timeLeft.days)}:${formatUnit(timeLeft.hours)}:${formatUnit(timeLeft.minutes)}:${formatUnit(timeLeft.seconds)}`;
   }, [timeLeft]);
-
   return (
-    <div
-      ref={homeRef}
-      className="min-h-screen bg-black text-white flex items-center justify-center px-4 relative overflow-hidden"
-    >
+    <div className="relative min-h-screen bg-black text-white flex items-center justify-center px-4">
       <p
-        className="absolute top-8 md:top-10 left-1/2 -translate-x-1/2 text-4xl md:text-7xl font-bold tracking-[0.2em] select-none pointer-events-none"
-        style={{
-          fontFamily: "'IBM Plex Mono', monospace",
-          opacity: 0.04,
-          whiteSpace: 'nowrap'
-        }}
+        className="absolute top-8 left-1/2 -translate-x-1/2 text-3xl md:text-6xl font-bold tracking-[0.3em] text-white"
+        style={{ fontFamily: "'IBM Plex Mono', monospace", opacity: 0.06 }}
       >
         ZEYT OEHT NOCIQ
       </p>
-
-    <div className="min-h-screen bg-black text-white flex items-center justify-center px-4">
       <div className="text-center">
         <p
           className="mb-4 text-xs md:text-sm tracking-[0.3em] text-white/70"
