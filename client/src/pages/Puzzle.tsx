@@ -93,6 +93,41 @@ export default function Puzzle() {
               <span style={{ fontSize: '120px' }}>🎧</span>
             </div>
           </div>
+        ) : slug === 'tucupi' ? (
+          <div className="mb-12">
+            <div className="h-px bg-white/70 mb-12 mx-auto w-32" />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 text-left">
+              <ul className="list-disc pl-6 space-y-2" style={{
+                fontFamily: "'Space Mono', monospace",
+                letterSpacing: '0.05em',
+                lineHeight: '1.6'
+              }}>
+                <li>???</li>
+                <li>Purê de batata doce</li>
+                <li>Vagem no vapor com Alho Assado</li>
+              </ul>
+              <ul className="list-disc pl-6 space-y-2" style={{
+                fontFamily: "'Space Mono', monospace",
+                letterSpacing: '0.05em',
+                lineHeight: '1.6'
+              }}>
+                <li>???</li>
+                <li>Arroz com Ervas Finas</li>
+                <li>Abobrinha Grelhada</li>
+              </ul>
+              <ul className="list-disc pl-6 space-y-2" style={{
+                fontFamily: "'Space Mono', monospace",
+                letterSpacing: '0.05em',
+                lineHeight: '1.6'
+              }}>
+                <li>???</li>
+                <li>Gratin Dauphinois</li>
+                <li>Vagem Francesa</li>
+                <li>Purê de Batata</li>
+                <li>Legumes Glaceados</li>
+              </ul>
+            </div>
+          </div>
         ) : (
           <p className="text-base md:text-lg text-center mb-12" style={{
             fontFamily: "'Space Mono', monospace",

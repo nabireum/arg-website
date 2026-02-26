@@ -30,6 +30,15 @@ export const ENIGMAS_LISTA: Enigma[] = [
     question: '🍍,📚,🎧',
     hint: 'Na primeira vez, pensou ser pequeno. Na segunda, nem precisou falar. Na última, disse ruídos. Quem ele era?',
     answer: 'IMPOSTOR',
+    nextSlug: 'tucupi',
+  },
+  {
+    slug: 'tucupi',
+    title: 'VOCE É O QUE COME.',
+    question:
+      'Purê de batata doce, Vagem no vapor com Alho Assado; Arroz com Ervas Finas, Abobrinha Grelhada; Gratin Dauphinois, Vagem Francesa, Purê de Batata, Legumes Glaceados.',
+    hint: 'Gasconha, França. Foie Gras.',
+    answer: 'Pato',
     nextSlug: null,
   },
 ];
