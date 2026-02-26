@@ -10,6 +10,8 @@ interface GameContextType {
   isTimeUp: boolean;
   completedPuzzles: Set<string>;
   markPuzzleComplete: (slug: string) => void;
+  puzzleStates: Map<string, boolean>;
+  setPuzzleComplete: (slug: string, isComplete: boolean) => void;
 }
 
 const HARD_MODE_TIME = 15 * 60;
@@ -21,6 +23,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
   const [timeRemaining, setTimeRemaining] = useState(HARD_MODE_TIME);
   const [isTimeUp, setIsTimeUp] = useState(false);
   const [completedPuzzles, setCompletedPuzzles] = useState<Set<string>>(new Set());
+  const [puzzleStates, setPuzzleStates] = useState<Map<string, boolean>>(new Map());
 
   useEffect(() => {
     if (mode !== 'hard' || isTimeUp) return;
@@ -41,6 +44,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     setTimeRemaining(HARD_MODE_TIME);
     setIsTimeUp(false);
     setCompletedPuzzles(new Set());
+    setPuzzleStates(new Map());
   }, []);
 
   const endGame = useCallback(() => {
@@ -48,10 +52,19 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     setTimeRemaining(HARD_MODE_TIME);
     setIsTimeUp(false);
     setCompletedPuzzles(new Set());
+    setPuzzleStates(new Map());
   }, []);
 
   const markPuzzleComplete = useCallback((slug: string) => {
     setCompletedPuzzles((prev) => new Set([...Array.from(prev), slug]));
+  }, []);
+
+  const setPuzzleComplete = useCallback((slug: string, isComplete: boolean) => {
+    setPuzzleStates((prev) => {
+      const newMap = new Map(prev);
+      newMap.set(slug, isComplete);
+      return newMap;
+    });
   }, []);
 
   const value: GameContextType = {
@@ -62,6 +75,8 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     isTimeUp,
     completedPuzzles,
     markPuzzleComplete,
+    puzzleStates,
+    setPuzzleComplete,
   };
 
   return <GameContext.Provider value={value}>{children}</GameContext.Provider>;

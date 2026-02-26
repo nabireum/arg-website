@@ -7,12 +7,13 @@ import { useGame } from '@/contexts/GameContext';
 export default function Puzzle() {
   const [match, params] = useRoute('/room1/:slug');
   const [, navigate] = useLocation();
-  const { mode, timeRemaining, isTimeUp, completedPuzzles, markPuzzleComplete, endGame } = useGame();
+  const { mode, timeRemaining, isTimeUp, completedPuzzles, markPuzzleComplete, endGame, puzzleStates } = useGame();
 
   const [userAnswer, setUserAnswer] = useState('');
   const [showHint, setShowHint] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const slug = params?.slug;
   const currentPuzzle = slug ? obterEnigma(slug) : null;
@@ -34,6 +35,49 @@ export default function Puzzle() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validação especial para o enigma 'festa' no modo Hard
+    if (mode === 'hard' && slug === 'festa') {
+      const isPuzzleComplete = puzzleStates.get('festa') === true;
+      const isAnswerCorrect = validarResposta(slug, userAnswer);
+
+      if (!isPuzzleComplete) {
+        setErrorMessage('❌ O PUZZLE NÃO ESTÁ COMPLETO!');
+        setTimeout(() => {
+          navigate('/room1/cofre');
+          setErrorMessage('');
+        }, 1500);
+        return;
+      }
+
+      if (!isAnswerCorrect) {
+        setErrorMessage('❌ SENHA INCORRETA!');
+        setTimeout(() => {
+          navigate('/room1/cofre');
+          setErrorMessage('');
+        }, 1500);
+        return;
+      }
+
+      // Se passou em ambas as validações
+      setIsCorrect(true);
+      markPuzzleComplete(slug);
+      setTimeout(() => {
+        const proximoEnigma = currentPuzzle!.nextSlug;
+        if (proximoEnigma) {
+          setUserAnswer('');
+          setShowHint(false);
+          setIsCorrect(false);
+          navigate(`/room1/${proximoEnigma}`);
+        } else {
+          endGame();
+          navigate('/room1');
+        }
+      }, 1000);
+      return;
+    }
+
+    // Lógica padrão para outros enigmas e modo Normal
     if (validarResposta(slug!, userAnswer)) {
       setIsCorrect(true);
       markPuzzleComplete(slug!);
@@ -49,6 +93,13 @@ export default function Puzzle() {
           navigate('/room1');
         }
       }, 1000);
+    } else if (mode === 'hard') {
+      // Punição para erro de senha em modo Hard (outros enigmas)
+      setErrorMessage('❌ SENHA INCORRETA!');
+      setTimeout(() => {
+        navigate('/room1/cofre');
+        setErrorMessage('');
+      }, 1500);
     }
   };
 
@@ -143,7 +194,18 @@ export default function Puzzle() {
         {/* Sliding Puzzle (enigma 'festa') */}
         {slug === 'festa' && (
           <div className="mb-12 flex justify-center">
-            <SlidingPuzzle gridSize={3} />
+            <SlidingPuzzle gridSize={3} puzzleSlug="festa" />
+          </div>
+        )}
+
+        {/* Error Message */}
+        {errorMessage && (
+          <div className="mb-8 p-4 border-2 border-red-500 bg-red-900/20 text-center" style={{
+            fontFamily: "'Space Mono', monospace",
+            letterSpacing: '0.05em',
+            color: '#ef4444'
+          }}>
+            <p className="text-sm">{errorMessage}</p>
           </div>
         )}
 

@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react';
+import { useGame } from '@/contexts/GameContext';
 
 interface SlidingPuzzleProps {
   gridSize: number;
   onComplete?: () => void;
+  puzzleSlug?: string;
 }
 
-export default function SlidingPuzzle({ gridSize = 3, onComplete }: SlidingPuzzleProps) {
+export default function SlidingPuzzle({ gridSize = 3, onComplete, puzzleSlug = 'festa' }: SlidingPuzzleProps) {
+  const { setPuzzleComplete } = useGame();
   const [tiles, setTiles] = useState<number[]>([]);
   const [moves, setMoves] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
@@ -46,6 +49,7 @@ export default function SlidingPuzzle({ gridSize = 3, onComplete }: SlidingPuzzl
     setTiles(shufflePuzzle([...initialTiles]));
     setMoves(0);
     setIsComplete(false);
+    setPuzzleComplete(puzzleSlug, false);
   };
 
   const isPuzzleComplete = (currentTiles: number[]): boolean => {
@@ -63,6 +67,7 @@ export default function SlidingPuzzle({ gridSize = 3, onComplete }: SlidingPuzzl
       setMoves(moves + 1);
       if (isPuzzleComplete(newTiles)) {
         setIsComplete(true);
+        setPuzzleComplete(puzzleSlug, true);
         onComplete?.();
       }
     }
