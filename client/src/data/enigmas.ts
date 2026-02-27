@@ -4,7 +4,7 @@ export interface Enigma {
   title: string;
   question: string;
   hint: string;
-  answer: string;
+  answer: string | string[];
   nextSlug: string | null;
 }
 
@@ -48,6 +48,113 @@ export const ENIGMAS_LISTA: Enigma[] = [
     question: PRESCIENCIA_IMAGE_DATA_URL,
     hint: 'E sem querer, aquele foi o presságio.',
     answer: 'andheresourfinalnightalive',
+    nextSlug: 'vote',
+  },
+  {
+    slug: 'vote',
+    title: '',
+    question: 'INPUT NAME',
+    hint: 'Como prova da sua lealdade, se realmente quiser descobrir a verdade, me dê um nome. Você precisa escolher quem. Só assim eu irei revelar o que procura.',
+    answer: [
+      'Leigh Ainsworth',
+      'LeighAinsworth',
+      'Leigh',
+      'Amanda de Lavienne',
+      'AmandaDeLavienne',
+      'Amanda',
+      'Dambi Sohn',
+      'DambiSohn',
+      'Dambi',
+      'Saeyoung Kim',
+      'SaeyoungKim',
+      'Saeyoung',
+      'Lilith Cohen',
+      'LilithCohen',
+      'Lilith',
+      'Roy Aquino',
+      'RoyAquino',
+      'Roy',
+      'Li Meiyu',
+      'LiMeiyu',
+      'Li',
+      'Blythe Hopper',
+      'BlytheHopper',
+      'Blythe',
+      'Jason Mendal',
+      'JasonMendal',
+      'Jason',
+      'Thomas Rheault',
+      'ThomasRheault',
+      'Thomas',
+      'Alma Carter',
+      'AlmaCarter',
+      'Alma',
+      'Hyun Sohn',
+      'HyunSohn',
+      'Hyun',
+      'Armin Keenan',
+      'ArminKeenan',
+      'Armin',
+      'Ambre Carello',
+      'AmbreCarello',
+      'Ambre',
+      'Nathaniel Carello',
+      'NathanielCarello',
+      'Nathaniel',
+      'Chani',
+      'Priya Diwani',
+      'PriyaDiwani',
+      'Priya',
+      'Castiel Veilmont',
+      'CastielVeilmont',
+      'Castiel',
+      'Joan Bellamy',
+      'JoanBellamy',
+      'Joan',
+      'Charlotte Volkova',
+      'CharlotteVolkova',
+      'Charlotte',
+      'Gabin Roché',
+      'GabinRoché',
+      'Gabin',
+      'Debrah',
+      'Ysaline Dolga',
+      'YsalineDolga',
+      'Ysaline',
+      'Olivier Delvis',
+      'OlivierDelvis',
+      'Olivier',
+      'Melody Grace',
+      'MelodyGrace',
+      'Melody',
+      'Devon Okere',
+      'DevonOkere',
+      'Devon',
+      'Kim Phillips',
+      'KimPhillips',
+      'Kim',
+      'Helena Aubinet',
+      'HelenaAubinet',
+      'Helena',
+      'Iris Rheault',
+      'IrisRheault',
+      'Iris',
+      'Lysandre Ainsworth',
+      'LysandreAinsworth',
+      'Lysandre',
+      'Lynn Vienne Darcy',
+      'LynnVienneDarcy',
+      'Lynn',
+      'Violette Delvis',
+      'VioletteDelvis',
+      'Violette',
+      'Nina Zaytseva',
+      'NinaZaytseva',
+      'Nina',
+      'Rosalya de Meilhan',
+      'RosalyaDeMeilhan',
+      'Rosalya',
+    ],
     nextSlug: null,
   },
 ];
@@ -67,5 +174,17 @@ export function obterEnigma(slug: string): Enigma | undefined {
 export function validarResposta(slug: string, resposta: string): boolean {
   const enigma = obterEnigma(slug);
   if (!enigma) return false;
-  return resposta.toLowerCase().trim() === enigma.answer.toLowerCase().trim();
+
+  const normalize = (text: string) =>
+    text
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/\s+/g, '')
+      .toLowerCase()
+      .trim();
+
+  const normalizedAnswer = normalize(resposta);
+  const possibleAnswers = Array.isArray(enigma.answer) ? enigma.answer : [enigma.answer];
+
+  return possibleAnswers.some((answer) => normalize(answer) === normalizedAnswer);
 }

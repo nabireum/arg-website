@@ -201,6 +201,15 @@ export default function Puzzle() {
               className="w-full max-w-md h-auto"
             />
           </div>
+        ) : slug === 'vote' ? (
+          <div className="mb-12 border border-white/60 bg-black p-6 md:p-8" style={{
+            fontFamily: "'Space Mono', monospace"
+          }}>
+            <div className="text-white/80 mb-4">------------------------------------------------------------</div>
+            <p className="text-lg md:text-xl text-left tracking-wide">
+              INPUT NAME
+            </p>
+          </div>
         ) : (
           <p className="text-base md:text-lg text-center mb-12" style={{
             fontFamily: "'Space Mono', monospace",
@@ -237,41 +246,43 @@ export default function Puzzle() {
             letterSpacing: '0.05em',
             color: 'rgba(255,255,255,0.7)'
           }}>
-            INSIRA A SENHA
+            {slug === 'vote' ? 'INPUT NAME' : 'INSIRA A SENHA'}
           </label>
           <div className="relative">
             <input
-              type={showPassword ? "text" : "password"}
+              type={slug === 'vote' ? 'text' : showPassword ? 'text' : 'password'}
               value={userAnswer}
               onChange={(e) => setUserAnswer(e.target.value)}
-              placeholder="••••••••••••••••"
+              placeholder={slug === 'vote' ? 'Type here...' : '••••••••••••••••'}
               disabled={isCorrect}
-              className="w-full px-4 py-4 pr-12 bg-gray-900 border-2 border-white text-white placeholder-gray-500 focus:outline-none focus:border-white transition-colors disabled:opacity-50"
+              className={`w-full px-4 py-4 ${slug === 'vote' ? '' : 'pr-12'} bg-gray-900 border-2 border-white text-white placeholder-gray-500 focus:outline-none focus:border-white transition-colors disabled:opacity-50`}
               style={{
                 fontFamily: "'Space Mono', monospace",
                 letterSpacing: '0.05em',
-                textTransform: 'uppercase'
+                textTransform: slug === 'vote' ? 'none' : 'uppercase'
               }}
             />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              disabled={isCorrect}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-white hover:text-gray-300 transition-colors disabled:opacity-50"
-              title={showPassword ? "Ocultar senha" : "Mostrar senha"}
-            >
-              {showPassword ? (
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                  <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
-                </svg>
-              ) : (
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-4.512 1.074l-1.78-1.781zm4.261 4.26l1.514 1.515a2.003 2.003 0 012.45 2.45l1.514 1.514a4 4 0 00-5.478-5.478z" clipRule="evenodd" />
-                  <path d="M15.171 13.576l1.414 1.414A10.016 10.016 0 0120.458 10C19.184 5.943 15.394 3 11 3a9.948 9.948 0 00-4.843 1.269l1.415 1.415A7.971 7.971 0 0111 5a8 8 0 018 8c0 .718-.102 1.413-.29 2.061zm-2.828 2.828l1.415 1.415c-1.08.58-2.291.91-3.758.91a8 8 0 01-8-8c0-1.467.33-2.678.91-3.758l1.415 1.415A6.981 6.981 0 005 10a7 7 0 007 7c1.467 0 2.678-.33 3.757-.91z" />
-                </svg>
-              )}
-            </button>
+            {slug !== 'vote' && (
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                disabled={isCorrect}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-white hover:text-gray-300 transition-colors disabled:opacity-50"
+                title={showPassword ? "Ocultar senha" : "Mostrar senha"}
+              >
+                {showPassword ? (
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                    <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
+                  </svg>
+                ) : (
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-4.512 1.074l-1.78-1.781zm4.261 4.26l1.514 1.515a2.003 2.003 0 012.45 2.45l1.514 1.514a4 4 0 00-5.478-5.478z" clipRule="evenodd" />
+                    <path d="M15.171 13.576l1.414 1.414A10.016 10.016 0 0120.458 10C19.184 5.943 15.394 3 11 3a9.948 9.948 0 00-4.843 1.269l1.415 1.415A7.971 7.971 0 0111 5a8 8 0 018 8c0 .718-.102 1.413-.29 2.061zm-2.828 2.828l1.415 1.415c-1.08.58-2.291.91-3.758.91a8 8 0 01-8-8c0-1.467.33-2.678.91-3.758l1.415 1.415A6.981 6.981 0 005 10a7 7 0 007 7c1.467 0 2.678-.33 3.757-.91z" />
+                  </svg>
+                )}
+              </button>
+            )}
           </div>
           <button
             type="submit"
