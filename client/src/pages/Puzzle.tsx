@@ -193,6 +193,14 @@ export default function Puzzle() {
               </ul>
             </div>
           </div>
+        ) : slug === 'presciencia' ? (
+          <div className="mb-12 flex justify-center">
+            <img
+              src={currentPuzzle.question}
+              alt="Cartão do enigma Presciência"
+              className="w-full max-w-md h-auto"
+            />
+          </div>
         ) : (
           <p className="text-base md:text-lg text-center mb-12" style={{
             fontFamily: "'Space Mono', monospace",
