@@ -1,3 +1,4 @@
+import { PRESCIENCIA_IMAGE_DATA_URL } from './prescienciaImage';
 export interface Enigma {
   slug: string;
   title: string;
@@ -39,6 +40,14 @@ export const ENIGMAS_LISTA: Enigma[] = [
       'Purê de batata doce, Vagem no vapor com Alho Assado; Arroz com Ervas Finas, Abobrinha Grelhada; Gratin Dauphinois, Vagem Francesa, Purê de Batata, Legumes Glaceados.',
     hint: 'Gasconha, França. Foie Gras.',
     answer: 'Pato',
+    nextSlug: 'presciencia',
+  },
+  {
+    slug: 'presciencia',
+    title: '',
+    question: PRESCIENCIA_IMAGE_DATA_URL,
+    hint: 'E sem querer, aquele foi o presságio.',
+    answer: 'andheresourfinalnightalive',
     nextSlug: null,
   },
 ];
