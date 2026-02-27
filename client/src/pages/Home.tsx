@@ -56,60 +56,48 @@ export default function Home() {
 
   return (
     <div ref={homeRef} className="relative min-h-screen bg-black text-white flex flex-col items-center justify-center px-4 py-8">
-      {/* Timer at the top */}
-      <div className="absolute top-8 left-1/2 -translate-x-1/2 text-center">
+      {/* Timer section - positioned higher */}
+      <div className="absolute top-16 left-1/2 -translate-x-1/2 text-center">
         <h1
-          className="text-3xl md:text-5xl font-bold tracking-[0.2em]"
+          className="text-4xl md:text-6xl font-bold tracking-[0.15em]"
           style={{ fontFamily: "'IBM Plex Mono', monospace" }}
         >
           {countdown}
         </h1>
         <p
-          className="mt-2 text-xs md:text-sm tracking-[0.2em] text-white/60"
+          className="mt-3 text-xs md:text-sm tracking-[0.2em] text-white/60"
           style={{ fontFamily: "'Space Mono', monospace" }}
         >
           DOMINGO • 01/03/2026 • 19H
         </p>
       </div>
 
-      {/* Main content */}
-      <div className="text-center flex-1 flex flex-col items-center justify-center">
-        <p
-          className="mb-12 text-xs md:text-sm tracking-[0.3em] text-white/70"
-          style={{ fontFamily: "'Space Mono', monospace" }}
-        >
-          Nos encontraremos de novo :).
-        </p>
-
-        {/* Clickable computer image */}
+      {/* Main content - centered */}
+      <div className="text-center flex-1 flex flex-col items-center justify-center gap-12">
+        {/* Clickable computer image - larger */}
         <button
           onClick={() => navigate('/room')}
-          className="mb-8 hover:opacity-80 transition-opacity duration-200 cursor-pointer focus:outline-none"
-          title="Clique para entrar"
+          className="focus:outline-none cursor-pointer"
+          title=""
         >
           <img
             src="/old-computer.png"
             alt="Computador antigo"
-            className="w-64 md:w-80 h-auto"
+            className="w-96 md:w-[500px] h-auto"
           />
         </button>
 
-        {/* "* Desligado" text */}
+        {/* "* Desligado" text - pixelated font with proper spacing */}
         <p
-          className="text-2xl md:text-4xl font-bold tracking-[0.2em]"
-          style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+          className="text-3xl md:text-5xl font-bold tracking-[0.15em]"
+          style={{
+            fontFamily: "'Press Start 2P', cursive",
+            letterSpacing: '0.08em'
+          }}
         >
           * Desligado
         </p>
       </div>
-
-      {/* Background watermark */}
-      <p
-        className="absolute top-8 left-1/2 -translate-x-1/2 text-3xl md:text-6xl font-bold tracking-[0.3em] text-white pointer-events-none"
-        style={{ fontFamily: "'IBM Plex Mono', monospace", opacity: 0.06 }}
-      >
-        ZEYT OEHT NOCIQ
-      </p>
     </div>
   );
 }
