@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation } from 'wouter';
+import { useInspectComment } from '@/hooks/useInspectComment';
 
 const TARGET_DATE = new Date('2026-03-01T19:00:00-03:00').getTime();
 const INSPECT_MESSAGE = "Você achou mesmo que eu iria esconder algo aqui agora? Eu não sou estupida, acho que já deve ter percebido. Se quiser mesmo saber meu segredo, então aguarde mais um pouco. Acho que vamos nos encontrar aqui muito em breve...";
@@ -34,18 +35,7 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
-  useEffect(() => {
-    if (!homeRef.current) return;
-
-    const commentNode = document.createComment(` ${INSPECT_MESSAGE} `);
-    homeRef.current.prepend(commentNode);
-
-    return () => {
-      if (homeRef.current?.contains(commentNode)) {
-        homeRef.current.removeChild(commentNode);
-      }
-    };
-  }, []);
+  useInspectComment(homeRef, INSPECT_MESSAGE);
 
   const countdown = useMemo(() => {
     if (timeLeft.diff === 0) {
