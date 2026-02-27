@@ -207,7 +207,7 @@ export default function Puzzle() {
           }}>
             <div className="text-white/80 mb-4">------------------------------------------------------------</div>
             <p className="text-lg md:text-xl text-left tracking-wide">
-              INPUT NAME
+              INPUT_NAME:
             </p>
           </div>
         ) : (
