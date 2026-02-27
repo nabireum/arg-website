@@ -1,8 +1,13 @@
 import { useLocation, useRoute } from 'wouter';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { obterEnigma, validarResposta, ENIGMAS_LISTA } from '@/data/enigmas';
 import SlidingPuzzle from '@/components/SlidingPuzzle';
 import { useGame } from '@/contexts/GameContext';
+import { useInspectComment } from '@/hooks/useInspectComment';
+
+const INSPECT_MESSAGES_BY_SLUG: Record<string, string> = {
+  amongus: 'Boa! Você encontrou a mensagem escondida do enigma amongus. Continue investigando os detalhes desta sala...',
+};
 
 export default function Puzzle() {
   const [match, params] = useRoute('/room1/:slug');
@@ -17,6 +22,14 @@ export default function Puzzle() {
 
   const slug = params?.slug;
   const currentPuzzle = slug ? obterEnigma(slug) : null;
+  const puzzleRef = useRef<HTMLDivElement>(null);
+
+  const inspectMessage = useMemo(() => {
+    if (!slug) return null;
+    return INSPECT_MESSAGES_BY_SLUG[slug] ?? null;
+  }, [slug]);
+
+  useInspectComment(puzzleRef, inspectMessage);
 
   useEffect(() => {
     if (!mode) navigate('/room1');
@@ -112,7 +125,7 @@ export default function Puzzle() {
   if (!currentPuzzle) return null;
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center px-4 py-16">
+    <div ref={puzzleRef} className="min-h-screen bg-black text-white flex flex-col items-center justify-center px-4 py-16">
       <div className="relative z-10 max-w-2xl w-full">
         {/* Header - Timer only */}
         {mode === 'hard' && (
