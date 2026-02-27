@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation } from 'wouter';
 
 const TARGET_DATE = new Date('2026-03-01T19:00:00-03:00').getTime();
-const INSPECT_MESSAGE = "Você achou mesmo que eu iria esconder algo aqui agora? Eu não sou estupida, acho que já deve ter percebido. Se quiser mesmo saber meu segredo, então aguarde mais um pouco. Acho que vamos nos encontrar aqui muito em breve...";
+const INSPECT_MESSAGE = "Interessante. Muito, muito Interessante...";
 
 function formatUnit(value: number) {
   return value.toString().padStart(2, '0');
