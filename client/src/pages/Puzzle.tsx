@@ -6,7 +6,7 @@ import { useGame } from '@/contexts/GameContext';
 import { useInspectComment } from '@/hooks/useInspectComment';
 
 const INSPECT_MESSAGES_BY_SLUG: Record<string, string> = {
-  cofre: 'Boa! Você encontrou a mensagem escondida do enigma amongus. Continue investigando os detalhes desta sala...',
+  cofre: 'A resposta está na url...',
 };
 
 export default function Puzzle() {
