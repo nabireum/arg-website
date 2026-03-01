@@ -9,6 +9,7 @@ import Puzzle from "./pages/Puzzle";
 import Room from "./pages/Room";
 import Room1 from "./pages/Room1";
 import LegacyPuzzleRedirect from "./pages/LegacyPuzzleRedirect";
+import You from "./pages/You";
 
 function Router() {
   return (
@@ -17,6 +18,7 @@ function Router() {
       <Route path="/room" component={Room} />
       <Route path="/room1" component={Room1} />
       <Route path="/room1/:slug" component={Puzzle} />
+      <Route path="/room/you" component={You} />
       <Route path="/:slug" component={LegacyPuzzleRedirect} />
       <Route component={NotFound} />
     </Switch>
