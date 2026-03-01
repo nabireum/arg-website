@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useLocation } from 'wouter';
 import { useInspectComment } from '@/hooks/useInspectComment';
 
 const TARGET_DATE = new Date('2026-03-01T19:00:00-03:00').getTime();
@@ -24,7 +23,6 @@ function getTimeLeft() {
 
 export default function Home() {
   const [timeLeft, setTimeLeft] = useState(getTimeLeft);
-  const [, navigate] = useLocation();
   const homeRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -66,7 +64,7 @@ export default function Home() {
       <div className="text-center flex-1 flex flex-col items-center justify-center gap-12">
         {/* Clickable computer image - larger */}
         <button
-          onClick={() => navigate('/room')}
+          onClick={() => window.location.assign('https://segredobalian.space/room1/')}
           className="focus:outline-none cursor-pointer"
           title=""
         >
@@ -77,7 +75,7 @@ export default function Home() {
           />
         </button>
 
-        {/* "* Desligado" text - pixelated font with proper spacing */}
+        {/* "* Ligado" text - pixelated font with proper spacing */}
         <p
           className="text-3xl md:text-5xl font-bold tracking-[0.15em]"
           style={{
@@ -85,7 +83,7 @@ export default function Home() {
             letterSpacing: '0.08em'
           }}
         >
-          * Desligado
+          * Ligado
         </p>
       </div>
     </div>
