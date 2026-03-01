@@ -9,6 +9,152 @@ const INSPECT_MESSAGES_BY_SLUG: Record<string, string> = {
   cofre: 'A resposta está na url...',
 };
 
+const ERROR_MESSAGE_DURATION_MS = 3000;
+
+function normalizeInput(text: string): string {
+  return text
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[\s,;]+/g, '')
+    .toUpperCase()
+    .trim();
+}
+
+function getIncorrectAnswerMessage(slug: string, attempt: number, input: string): string | null {
+  if (slug === 'cofre') {
+    if (attempt === 1) {
+      return 'Hm… Essa é só a primeira sala e você já errou? Esperava mais de você. Bom, aqui vai mais uma dica já que sou boazinha: é uma senha com letras, números e caracteres especiais. Você já viu ela antes…';
+    }
+
+    if (attempt === 2) {
+      return 'A url contém outra dica :).';
+    }
+
+    return 'Hm… tenta pensar um pouquinho mais ;).';
+  }
+
+  if (slug === 'festa') {
+    if (attempt === 1) {
+      return 'A resposta está na imagem, tudo junto, e sem hastag ;).';
+    }
+
+    return 'Hm… tenta pensar um pouquinho mais ;).';
+  }
+
+  if (slug === 'amongus') {
+    const normalizedInput = normalizeInput(input);
+    const obviousInputs = new Set(['ABACAXILIVROFONE']);
+    const nathanielInputs = new Set(['NATHANIEL', 'NATH', 'NATHANIELCARELLO', 'LOIROBURRO']);
+
+    if (obviousInputs.has(normalizedInput)) {
+      return 'Não é tão óbvio assim… Apesar de estar na ordem correta, essa não é a resposta. Mas é o caminho.';
+    }
+
+    if (nathanielInputs.has(normalizedInput)) {
+      return "Quase isso. Ele pensou que ‘abacaxi’ fosse ‘abelha’, por isso disse que era pequeno.";
+    }
+
+    return 'A url contém uma dica. Pense um pouquinho mais ;).';
+  }
+
+  if (slug === 'tucupi') {
+    if (attempt === 1) {
+      return 'Você já deve ter percebido que são cardápios. Agora, o que será que está faltando neles?';
+    }
+
+    if (attempt === 2) {
+      return 'A url é um prato feito com a resposta.';
+    }
+
+    return 'A Ysaline ficaria muito triste…';
+  }
+
+  if (slug === 'presciencia') {
+    const normalizedInput = normalizeInput(input);
+    const hyunInputs = new Set(['HYUN', 'SOHNHYUN', 'HYUNSOHN']);
+
+    if (hyunInputs.has(normalizedInput)) {
+      return 'Claramente ele está ali. O tweet dele. Tenta pensar mais um pouco… quem sabe revisitar a postagem te ajude? :).';
+    }
+
+    if (attempt === 1) {
+      return 'Você sabe o que PRESCIÊNCIA significa?';
+    }
+
+    return 'Você lembra o que dizia o tweet?';
+  }
+
+  if (slug === 'vote') {
+    const normalizedInput = normalizeInput(input);
+    const danicaInputs = new Set(['DANICA', 'DANICABALIAN', 'DANICAJONES']);
+    const kianInputs = new Set(['KIAN', 'KIANAMORETTI', 'KIANMORETTI', 'PROJETOMBRE']);
+    const jakeInputs = new Set(['JAKE']);
+    const hackerInputs = new Set(['HACKER']);
+    const jadeInputs = new Set(['JADE', 'JADEBEAULIEU']);
+    const insultInputs = new Set([
+      'PORRA',
+      'BUCETA',
+      'CARALHO',
+      'FDP',
+      'FILHODAPUTA',
+      'FILHADAPUTA',
+      'MALDITA',
+      'CORNA',
+      'MORRE',
+      'CAPETA',
+      'BURRA',
+      'INFERNO',
+      'DIABO',
+      'PUTA',
+      'VAGABUNDA',
+      'PRAGA',
+      'DEFUNTA',
+      'OTARIA',
+      'IDIOTA',
+      'DESGRACADA',
+      'DESGRACA',
+      'TRAIDORA',
+      'X9',
+      'XISNOVE',
+      'DIABA',
+      'FALSA',
+      'FALSIANE',
+      'PQP',
+      'PUTAQUEPARIU',
+      'SMT',
+      'SEMATA',
+    ]);
+
+    if (danicaInputs.has(normalizedInput)) {
+      return 'Pra quem só tem um martelo, tudo se parece com um prego.';
+    }
+
+    if (kianInputs.has(normalizedInput)) {
+      return 'Você se acha esperto, né?';
+    }
+
+    if (jakeInputs.has(normalizedInput)) {
+      return 'Tão desesperado em encontrar a resposta que começou a inventar nomes… Patético, eu esperava mais de você.';
+    }
+
+    if (hackerInputs.has(normalizedInput)) {
+      return 'O Thomas? O Armin? O Saeyoung? Ao menos seja mais específico, caramba.';
+    }
+
+    if (jadeInputs.has(normalizedInput)) {
+      return 'Não.';
+    }
+
+    if (insultInputs.has(normalizedInput)) {
+      return 'Tão desesperados… Como eu trabalhei com gentinha assim por tanto tempo? Hahahaha.';
+    }
+
+    return 'Vamos lá… Eu só preciso de um NOME. É tão difícil assim?';
+  }
+
+  return null;
+}
+
 export default function Puzzle() {
   const [match, params] = useRoute('/room1/:slug');
   const [, navigate] = useLocation();
@@ -19,6 +165,7 @@ export default function Puzzle() {
   const [isCorrect, setIsCorrect] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [wrongAttemptsBySlug, setWrongAttemptsBySlug] = useState<Record<string, number>>({});
 
   const slug = params?.slug;
   const currentPuzzle = slug ? obterEnigma(slug) : null;
@@ -46,6 +193,20 @@ export default function Puzzle() {
     if (match && !currentPuzzle) navigate('/room1');
   }, [match, currentPuzzle, navigate]);
 
+  useEffect(() => {
+    setErrorMessage('');
+  }, [slug]);
+
+  const registerWrongAttempt = (puzzleSlug: string, input: string): string => {
+    const nextAttempt = (wrongAttemptsBySlug[puzzleSlug] ?? 0) + 1;
+    setWrongAttemptsBySlug((current) => ({
+      ...current,
+      [puzzleSlug]: nextAttempt,
+    }));
+
+    return getIncorrectAnswerMessage(puzzleSlug, nextAttempt, input) ?? '❌ SENHA INCORRETA!';
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -59,16 +220,16 @@ export default function Puzzle() {
         setTimeout(() => {
           navigate('/room1/cofre');
           setErrorMessage('');
-        }, 1500);
+        }, ERROR_MESSAGE_DURATION_MS);
         return;
       }
 
       if (!isAnswerCorrect) {
-        setErrorMessage('❌ SENHA INCORRETA!');
+        setErrorMessage(registerWrongAttempt(slug, userAnswer));
         setTimeout(() => {
           navigate('/room1/cofre');
           setErrorMessage('');
-        }, 1500);
+        }, ERROR_MESSAGE_DURATION_MS);
         return;
       }
 
@@ -108,11 +269,16 @@ export default function Puzzle() {
       }, 1000);
     } else if (mode === 'hard') {
       // Punição para erro de senha em modo Hard (outros enigmas)
-      setErrorMessage('❌ SENHA INCORRETA!');
+      setErrorMessage(registerWrongAttempt(slug!, userAnswer));
       setTimeout(() => {
         navigate('/room1/cofre');
         setErrorMessage('');
-      }, 1500);
+      }, ERROR_MESSAGE_DURATION_MS);
+    } else {
+      setErrorMessage(registerWrongAttempt(slug!, userAnswer));
+      setTimeout(() => {
+        setErrorMessage('');
+      }, ERROR_MESSAGE_DURATION_MS);
     }
   };
 
@@ -146,6 +312,17 @@ export default function Puzzle() {
             style={{ width: `${((completedPuzzles.size + 1) / ENIGMAS_LISTA.length) * 100}%` }}
           />
         </div>
+
+        {/* Error Message */}
+        {errorMessage && (
+          <div className="mb-8 px-5 py-4 border-2 border-red-500 bg-red-900/20 text-center" style={{
+            fontFamily: "'Space Mono', monospace",
+            letterSpacing: '0.04em',
+            color: '#fca5a5'
+          }}>
+            <p className="text-sm leading-relaxed">{errorMessage}</p>
+          </div>
+        )}
 
         {/* Question */}
         {slug === 'amongus' ? (
@@ -225,17 +402,6 @@ export default function Puzzle() {
         {slug === 'festa' && (
           <div className="mb-12 flex justify-center">
             <SlidingPuzzle gridSize={3} puzzleSlug="festa" />
-          </div>
-        )}
-
-        {/* Error Message */}
-        {errorMessage && (
-          <div className="mb-8 p-4 border-2 border-red-500 bg-red-900/20 text-center" style={{
-            fontFamily: "'Space Mono', monospace",
-            letterSpacing: '0.05em',
-            color: '#ef4444'
-          }}>
-            <p className="text-sm">{errorMessage}</p>
           </div>
         )}
 
