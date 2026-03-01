@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Arquivo de E-mails</title>
+    <style>
+      :root {
+        --bg: #0a0a0a;
+        --panel: #111315;
+        --panel-2: #15181c;
+        --line: #262a30;
+        --text: #ffffff;
+        --muted: #9aa3ad;
+        --accent: #2b3f59;
+        --accent-soft: #1a2738;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        min-height: 100%;
+        background: var(--bg);
+        color: var(--text);
+        font-family: Arial, Helvetica, sans-serif;
+      }
+
+      .mail-shell {
+        display: grid;
+        grid-template-columns: 340px 1fr;
+        min-height: 100vh;
+      }
+
+      .sidebar {
+        border-right: 1px solid var(--line);
+        background: linear-gradient(180deg, #101214 0%, #0d0f12 100%);
+        padding: 16px 12px;
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        overflow-y: auto;
+      }
+
+      .sidebar h1 {
+        margin: 0 8px 14px;
+        font-size: 15px;
+        letter-spacing: 0.05em;
+        color: #d7dde4;
+        text-transform: uppercase;
+      }
+
+      .mail-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .mail-item {
+        background: transparent;
+        border: 1px solid transparent;
+        border-radius: 8px;
+        color: var(--text);
+        text-align: left;
+        padding: 10px 12px;
+        cursor: pointer;
+        transition: background 120ms ease, border-color 120ms ease, transform 120ms ease;
+      }
+
+      .mail-item:hover {
+        background: #151921;
+        border-color: #2f3844;
+        transform: translateX(1px);
+      }
+
+      .mail-item.active {
+        background: var(--accent-soft);
+        border-color: var(--accent);
+        box-shadow: inset 0 0 0 1px rgba(150, 180, 220, 0.18);
+      }
+
+      .mail-subject {
+        font-size: 13px;
+        font-weight: 700;
+        margin-bottom: 4px;
+        color: #f3f6fa;
+      }
+
+      .mail-date {
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .viewer {
+        padding: 26px 32px;
+      }
+
+      .message-card {
+        background: linear-gradient(180deg, var(--panel-2) 0%, var(--panel) 100%);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        min-height: calc(100vh - 52px);
+        padding: 22px;
+      }
+
+      .meta {
+        display: grid;
+        gap: 10px;
+        margin-bottom: 18px;
+      }
+
+      .meta-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        font-size: 14px;
+      }
+
+      .meta-label {
+        color: #b6c1cd;
+        min-width: 64px;
+        font-weight: 700;
+      }
+
+      .meta-value {
+        color: #eff4fa;
+      }
+
+      .divider {
+        height: 1px;
+        width: 100%;
+        background: var(--line);
+        margin: 18px 0;
+      }
+
+      .body {
+        white-space: pre-wrap;
+        line-height: 1.7;
+        font-size: 14px;
+        color: #edf2f8;
+      }
+
+      @media (max-width: 980px) {
+        .mail-shell {
+          grid-template-columns: 1fr;
+        }
+
+        .sidebar {
+          height: auto;
+          position: static;
+          border-right: none;
+          border-bottom: 1px solid var(--line);
+        }
+
+        .message-card {
+          min-height: 55vh;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="mail-shell">
+      <aside class="sidebar">
+        <h1>Caixa de Entrada (Arquivo)</h1>
+        <ul id="mailList" class="mail-list"></ul>
+      </aside>
+
+      <section class="viewer">
+        <article class="message-card">
+          <div class="meta">
+            <div class="meta-row"><span class="meta-label">From:</span><span class="meta-value" id="from"></span></div>
+            <div class="meta-row"><span class="meta-label">To:</span><span class="meta-value" id="to"></span></div>
+            <div class="meta-row"><span class="meta-label">Subject:</span><span class="meta-value" id="subject"></span></div>
+            <div class="meta-row"><span class="meta-label">Date:</span><span class="meta-value" id="date"></span></div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div id="body" class="body"></div>
+        </article>
+      </section>
+    </main>
+
+    <script>
+      const emails = Array.from({ length: 17 }, (_, index) => {
+        const emailNumber = index + 1;
+        return {
+          id: `email-${emailNumber}`,
+          from: 'archive@segredobalian.space',
+          to: 'you@segredobalian.space',
+          subject: emailNumber === 6 || emailNumber === 12 ? `RE: Arquivo ${String(emailNumber - 1).padStart(2, '0')}` : `Arquivo ${String(emailNumber).padStart(2, '0')}`,
+          date: `00/${String(emailNumber).padStart(2, '0')}/20XX · 23:${String((emailNumber * 3) % 60).padStart(2, '0')}`,
+          body: `Este é um espaço reservado para o conteúdo do e-mail ${String(emailNumber).padStart(2, '0')}.
+
+Assim que você enviar os textos finais, este corpo será substituído pela mensagem oficial.`
+        };
+      });
+
+      const mailList = document.getElementById('mailList');
+      const from = document.getElementById('from');
+      const to = document.getElementById('to');
+      const subject = document.getElementById('subject');
+      const date = document.getElementById('date');
+      const body = document.getElementById('body');
+
+      function renderEmail(selectedId) {
+        const selected = emails.find((email) => email.id === selectedId) || emails[0];
+
+        from.textContent = selected.from;
+        to.textContent = selected.to;
+        subject.textContent = selected.subject;
+        date.textContent = selected.date;
+        body.textContent = selected.body;
+
+        Array.from(mailList.querySelectorAll('.mail-item')).forEach((item) => {
+          item.classList.toggle('active', item.dataset.emailId === selected.id);
+        });
+      }
+
+      function renderList() {
+        const fragment = document.createDocumentFragment();
+
+        emails.forEach((email) => {
+          const item = document.createElement('button');
+          item.type = 'button';
+          item.className = 'mail-item';
+          item.dataset.emailId = email.id;
+          item.innerHTML = `
+            <div class="mail-subject">${email.subject}</div>
+            <div class="mail-date">${email.date}</div>
+          `;
+
+          item.addEventListener('click', () => renderEmail(email.id));
+          fragment.appendChild(item);
+        });
+
+        mailList.appendChild(fragment);
+      }
+
+      renderList();
+      renderEmail(emails[0].id);
+    </script>
+  </body>
+</html>

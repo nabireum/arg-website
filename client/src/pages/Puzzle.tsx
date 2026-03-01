@@ -236,7 +236,7 @@ export default function Puzzle() {
           navigate(`/room1/${proximoEnigma}`);
         } else {
           endGame();
-          navigate('/room1');
+          window.location.assign('/archive/email/');
         }
       }, 1000);
       return;
@@ -255,7 +255,7 @@ export default function Puzzle() {
           navigate(`/room1/${proximoEnigma}`);
         } else {
           endGame();
-          navigate('/room1');
+          window.location.assign('/archive/email/');
         }
       }, 1000);
     } else if (mode === 'hard') {
