@@ -1,0 +1,480 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Arquivo de E-mails</title>
+    <style>
+      :root {
+        --bg: #0a0a0a;
+        --panel: #111315;
+        --panel-2: #15181c;
+        --line: #262a30;
+        --text: #ffffff;
+        --muted: #9aa3ad;
+        --accent: #2b3f59;
+        --accent-soft: #1a2738;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        min-height: 100%;
+        background: var(--bg);
+        color: var(--text);
+        font-family: Arial, Helvetica, sans-serif;
+      }
+
+      .mail-shell {
+        display: grid;
+        grid-template-columns: 340px 1fr;
+        min-height: 100vh;
+      }
+
+      .sidebar {
+        border-right: 1px solid var(--line);
+        background: linear-gradient(180deg, #101214 0%, #0d0f12 100%);
+        padding: 16px 12px;
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        overflow-y: auto;
+      }
+
+      .sidebar h1 {
+        margin: 0 8px 14px;
+        font-size: 15px;
+        letter-spacing: 0.05em;
+        color: #d7dde4;
+        text-transform: uppercase;
+      }
+
+      .mail-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .mail-item {
+        background: transparent;
+        border: 1px solid transparent;
+        border-radius: 8px;
+        color: var(--text);
+        text-align: left;
+        padding: 10px 12px;
+        cursor: pointer;
+        transition: background 120ms ease, border-color 120ms ease, transform 120ms ease;
+      }
+
+      .mail-item:hover {
+        background: #151921;
+        border-color: #2f3844;
+        transform: translateX(1px);
+      }
+
+      .mail-item.active {
+        background: var(--accent-soft);
+        border-color: var(--accent);
+        box-shadow: inset 0 0 0 1px rgba(150, 180, 220, 0.18);
+      }
+
+      .mail-subject {
+        font-size: 13px;
+        font-weight: 700;
+        margin-bottom: 4px;
+        color: #f3f6fa;
+      }
+
+      .mail-date {
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .viewer {
+        padding: 26px 32px;
+      }
+
+      .message-card {
+        background: linear-gradient(180deg, var(--panel-2) 0%, var(--panel) 100%);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        min-height: calc(100vh - 52px);
+        padding: 22px;
+      }
+
+      .meta {
+        display: grid;
+        gap: 10px;
+        margin-bottom: 18px;
+      }
+
+      .meta-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        font-size: 14px;
+      }
+
+      .meta-label {
+        color: #b6c1cd;
+        min-width: 64px;
+        font-weight: 700;
+      }
+
+      .meta-value {
+        color: #eff4fa;
+      }
+
+      .divider {
+        height: 1px;
+        width: 100%;
+        background: var(--line);
+        margin: 18px 0;
+      }
+
+      .body {
+        white-space: pre-wrap;
+        line-height: 1.7;
+        font-size: 14px;
+        color: #edf2f8;
+      }
+
+      @media (max-width: 980px) {
+        .mail-shell {
+          grid-template-columns: 1fr;
+        }
+
+        .sidebar {
+          height: auto;
+          position: static;
+          border-right: none;
+          border-bottom: 1px solid var(--line);
+        }
+
+        .message-card {
+          min-height: 55vh;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="mail-shell">
+      <aside class="sidebar">
+        <h1>Caixa de Entrada (Arquivo)</h1>
+        <ul id="mailList" class="mail-list"></ul>
+      </aside>
+
+      <section class="viewer">
+        <article class="message-card">
+          <div class="meta">
+            <div class="meta-row"><span class="meta-label">From:</span><span class="meta-value" id="from"></span></div>
+            <div class="meta-row"><span class="meta-label">To:</span><span class="meta-value" id="to"></span></div>
+            <div class="meta-row"><span class="meta-label">Subject:</span><span class="meta-value" id="subject"></span></div>
+            <div class="meta-row"><span class="meta-label">Date:</span><span class="meta-value" id="date"></span></div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div id="body" class="body"></div>
+        </article>
+      </section>
+    </main>
+
+    <script>
+      const emails = [
+        {
+          id: 'email-1',
+          from: 'danicabalian@workspace.com',
+          to: 'k.moretti@contato.org',
+          subject: 'Próximos passos.',
+          date: '20/11/2024 20:33',
+          body: `Boa noite, senhor.
+
+Conforme alinhamos, consigo organizar um “panorama” mensal do que está em andamento dentro da Devenementiel. Principalmente frentes de projeto, previsões de custo, contatos-chave e movimentações de fornecedores.
+
+Para manter isso seguro e simples, prefiro tratar a entrega de forma presencial, em encontros curtos e objetivos. Você comentou sobre uma rotina mensal; para mim funciona.
+Sugestão: Toda última quinta-feira do mês, 19h20, no mesmo local de ontem.
+Levo um resumo inicial e uma cópia dos arquivos no pendrive fornecido.
+
+Atenciosamente,
+Danica Ballian.`
+        },
+        {
+          id: 'email-2',
+          from: 'danicabalian@workspace.com',
+          to: 'k.moretti@contato.org',
+          subject: 'Atualização mensal - Dezembro/24.',
+          date: '23/12/2024 19:57',
+          body: `Boa noite, senhor.
+Confirmando que estará tudo pronto para a primeira entrega às 19h20 de quinta-feira. Estamos em época de fechamento e está uma bagunça deliciosa por aqui: gente correndo, planilhas abertas, retrabalho, ninguém prestando atenção em nada além do próprio incêndio.
+Consegui reunir uma cópia completa do quadro do mês:
+• projetos em andamento e próximos pitches;
+• orçamentos (com versões anteriores e cortes aprovados);
+• lista de fornecedores e condições praticadas;
+• histórico de cliente (ajustes, exigências, pontos fracos);
+• um mapa rápido de quem aprova o quê.
+Levo tudo em um pendrive, como combinado.
+
+Atenciosamente,
+Danica Balian.`
+        },
+        {
+          id: 'email-3',
+          from: 'k.moretti@contato.org',
+          to: 'danicabalian@workspace.com',
+          subject: 'RE: Atualização mensal - Dezembro/24.',
+          date: '24/12/2024 10:26',
+          body: `Interessante.
+Estou ansioso para descobrir se meu investimento vai valer a pena.
+Reservei uma mesa para nós, seja discreta.
+E, por favor, sem muitas formalidades. Você pode me chamar pelo meu nome, Danica.
+
+Nos vemos em breve.
+Kian A. Moretti.`
+        },
+        {
+          id: 'email-4',
+          from: 'danicabalian@workspace.com',
+          to: 'k.moretti@contato.org',
+          subject: 'Atualização mensal - Janeiro/25.',
+          date: '20/01/2025 19:09',
+          body: `Boa noite, Kian.
+Este mês fui mais fundo do que o habitual.
+Além do panorama, cruzei as cotações com o que realmente foi aprovado (e com o que “sumiu” na última revisão). Dá para ver onde mudam escopo, valores e prazos (e quem solicita). Além disso, este mês consegui coletar algumas informações sobre clientes e renovações de contratos. Consegui identificar os “gatilhos” de decisão e as fragilidades que costumam pesar na negociação.
+
+Posso te resumir em 20 minutos e te entregar o material.
+Podemos agendar esse encontro para amanhã?
+
+Atenciosamente,
+Danica Balian.`
+        },
+        {
+          id: 'email-5',
+          from: 'k.moretti@contato.org',
+          to: 'danicabalian@workspace.com',
+          subject: 'RE: Atualização mensal - Janeiro/25.',
+          date: '20/01/2025 19:19',
+          body: `Podemos agendar essa reunião para amanhã, suas entregas virão em um ótimo momento.
+Está fazendo um excelente trabalho, Danica.
+Gosto de pessoas esforçadas como você.
+
+Se esse material for tão bom quanto o que me promete, pode esperar por um generoso bônus :).
+
+Aguardo ansiosamente.
+Kian A. Moretti.`
+        },
+        {
+          id: 'email-6',
+          from: 'danicabalian@workspace.com',
+          to: 'k.moretti@contato.org',
+          subject: 'Atualização Mensal - Fevereiro/25.',
+          date: '24/02/2025 23:05',
+          body: `Olá, Kian.
+Foquei nas renovações, como você pediu na última reunião. Percebi que alguns clientes não andam satisfeitos com certos fornecedores, e fornecedores estão com algumas reclamações em relação a prazos. Há alguns rumores de que haverá reajuste em contratos ou total quebra de vínculo. De qualquer forma, estão correndo para encontrar novos fornecedores que se alinhem com a demanda dos clientes atuais. Estarei levando essas informações, além de planilhas de contatos e orçamentos para alguns eventos que estão para serem fechados.
+
+Te entrego tudo no pendrive amanhã, no horário e local de sempre.
+Obs.: esse tipo de mapa demanda mais tempo para cruzar informação. Ainda cabe no acordo atual, só sinalizando o aumento de carga.
+
+Atenciosamente,
+Danica Balian.`
+        },
+        {
+          id: 'email-7',
+          from: 'danicabalian@workspace.com',
+          to: 'k.moretti@contato.org',
+          subject: 'Reunião urgente de alinhamento.',
+          date: '26/03/2025 09:52',
+          body: `Olá, Kian.
+Nas últimas semanas pude puxar um comparativo entre as duas subsidiárias.
+Consegui montar uma visão consolidada da DEVENDREAMZ que revela onde eles se sobrepõem e onde competem internamente.
+Isso muda o alcance do meu trabalho. A GOLDREAMZ tem acesso a outra carteira, outros contratos e atualmente está com um volume mais alto de clientes e fornecedores. Em outras palavras: o que eu consigo a partir de agora vale mais.
+
+Podemos conversar hoje às 19h30? Como uma prova do que digo, estarei trazendo um comparativo dos contratos da DEVENEMENTIEL e GOLDREAMZ.
+Mas preciso alinhar valores antes de continuar.
+
+Atenciosamente,
+Danica Balian.`
+        },
+        {
+          id: 'email-8',
+          from: 'k.moretti@contato.org',
+          to: 'danicabalian@workspace.com',
+          subject: 'RE: Reunião urgente de alinhamento.',
+          date: '03/03/2025 11:38',
+          body: `Ok, estou disposto a rever sua remuneração se houver uma boa contraproposta.
+
+Nos vemos em breve.
+Kian A. Moretti.`
+        },
+        {
+          id: 'email-9',
+          from: 'danicabalian@workspace.com',
+          to: 'k.moretti@contato.org',
+          subject: 'Atualização Mensal - Abril/25.',
+          date: '24/04/2025 13:21',
+          body: `Kian.
+Como solicitado, fiz um mapeamento dos atuais funcionários das duas empresas. Salários, bônus, formação, histórico, vida dentro e fora do trabalho.
+Não entendo a urgência dessas informações, mas se sua intenção for comprar algum funcionário eu me sinto na necessidade de avisar que a grande maioria é estranhamente leal a empresa. De qualquer forma, precisei contratar um serviço extra para pegar algumas informações que o senhor solicitou. Na próxima reunião irei te enviar os detalhes do pagamento extra.
+
+Atenciosamente,
+Danica Balian.`
+        },
+        {
+          id: 'email-10',
+          from: 'k.moretti@contato.org',
+          to: 'danicabalian@workspace.com',
+          subject: 'RE:Atualização Mensal - Abril/25.',
+          date: '24/04/2025 14:13',
+          body: `Agradeço o seu esforço. O escopo desse… “projeto” ainda é segredo, tente não preocupar sua cabeça com coisas que não estão no seu alcance ainda.
+Mas, se te deixar aliviada, não tenho intenções de “roubar” os funcionários dessa empresinha.
+
+Irei te enviar a localização e o horário do nosso encontro em breve.
+Kian A. Moretti.`
+        },
+        {
+          id: 'email-11',
+          from: 'danicabalian@workspace.com',
+          to: 'k.moretti@contato.org',
+          subject: 'Atualização Mensal - Maio/25.',
+          date: '13/05/2025 07:09',
+          body: `Kian,
+Para a reunião de hoje trarei as planilhas solicitadas na nossa última conversa e informações de alguns projetos grandes com clientes que ainda vão ser fechados.
+Esses meses todos estou entregando relatórios impecáveis, informações que você não conseguiria sem minha ajuda. Mas estou me arriscando demais, liberando informações de projetos que estão com meu nome assinado e de colegas que talvez até já desconfiem de mim. Confiança nos dias de hoje é inestimável, e eu odiaria se você perdesse a sua única fonte dentro da DEVENDREAMZ.
+
+Por isso, gostaria de solicitar um aumento no nosso acordo + bônus por cada projeto extra que eu entregar. Espero chegar num acordo que fará juz as minhas capacidades.
+
+Atenciosamente,
+Danica Balian.`
+        },
+        {
+          id: 'email-12',
+          from: 'danicabalian@workspace.com',
+          to: 'k.moretti@contato.org',
+          subject: 'Atualização Mensal - Junho/25.',
+          date: '23/06/2025 04:13',
+          body: `Kian,
+Estou sendo transparente: eu não vou continuar sem um acordo revisado. Eu fiz a entrega como prevista este mês, mas continuo sem previsão de reajuste, mesmo demonstrando a minha lealdade a você. Me arrisquei muito, e agora você me deve um posicionamento.
+
+Condição para eu continuar a partir do próximo ciclo:
+• Bônus mensal: 4x o atual
+• Adiantamento fixo antes do encontro
+• Ajuste por risco quando envolver contratos específicos
+
+Espero uma boa contraproposta. Te encontro no lugar de sempre, às 22h.
+Danica Balian.`
+        },
+        {
+          id: 'email-13',
+          from: 'danicabalian@workspace.com',
+          to: 'k.moretti@contato.org',
+          subject: 'Sem resposta.',
+          date: '30/06/2025 00:09',
+          body: `Kian,
+Estou aguardando seu contato e não consegui ligar para o número no seu cartão.
+Me retorne assim que possível.
+
+Danica Balian.`
+        },
+        {
+          id: 'email-14',
+          from: 'danicabalian@workspace.com',
+          to: 'k.moretti@contato.org',
+          subject: 'ONDE VOCÊ ESTÁ?',
+          date: '08/07/2025 15:52',
+          body: `Kian,
+Estou aguardando seu contato e não consegui ligar para o número no seu cartão.
+Me retorne assim que possível.
+
+Danica Balian.`
+        },
+        {
+          id: 'email-15',
+          from: 'danicabalian@workspace.com',
+          to: 'k.moretti@contato.org',
+          subject: 'NÃO ME IGNORE!',
+          date: '17/07/2025 13:26',
+          body: `Eu fui no seu “trabalho” hoje.
+A recepcionista disse que não existe ninguém com esse nome. Mas eu sei que estão todos te acobertando, todos mentirosos e sujos igual a você.
+Eu sei que você está recebendo as minhas mensagens. Isso tudo é pelo dinheiro, não é? Mas você sabe que eu sei de tudo. Você sabe o quão crucial eu sou pra o seu “projetinho” acontecer.
+Não cometa a estupidez de me ignorar. Você não sabe do que eu sou capaz, Kian.`
+        },
+        {
+          id: 'email-16',
+          from: 'danicabalian@workspace.com',
+          to: 'k.moretti@contato.org',
+          subject: 'ÚLTIMO AVISO.',
+          date: '26/07/2025 23:45',
+          body: `Você tem evitado me responder, ser claro sobre valores e isso gera diversos problemas. Eu fico com todo o risco e com nenhuma garantia.
+Então vou ser direta.
+Se você aparecer na nossa próxima reunião e ainda assim tentar empurrar a decisão, eu vou procurar uma forma de me proteger. E isso inclui conversar com aqueles que você tenta prejudicar, caso eu precise.
+Eu não quero usar essa carta. Eu quero encerrar isso de forma adulta: acordo fechado, pagamento certo, rotina mantida.
+Eu espero sua confirmação antes do encontro.
+
+Danica Balian.`
+        },
+        {
+          id: 'email-17',
+          from: 'danicabalian@workspace.com',
+          to: 'k.moretti@contato.org',
+          subject: 'RE:ÚLTIMO AVISO.',
+          date: '26/07/2025 23:47',
+          body: `Ok, Danica. Vamos resolver isso de uma vez por todas, sim?
+Irei mandar meu motorista buscar você para conversarmos em um local mais privado, amanhã à noite.
+
+Te aguardo em breve :).`
+        }
+      ];
+
+      const mailList = document.getElementById('mailList');
+      const from = document.getElementById('from');
+      const to = document.getElementById('to');
+      const subject = document.getElementById('subject');
+      const date = document.getElementById('date');
+      const body = document.getElementById('body');
+
+      function renderEmail(selectedId) {
+        const selected = emails.find((email) => email.id === selectedId) || emails[0];
+
+        from.textContent = selected.from;
+        to.textContent = selected.to;
+        subject.textContent = selected.subject;
+        date.textContent = selected.date;
+        body.textContent = selected.body;
+
+        Array.from(mailList.querySelectorAll('.mail-item')).forEach((item) => {
+          item.classList.toggle('active', item.dataset.emailId === selected.id);
+        });
+      }
+
+      function renderList() {
+        const fragment = document.createDocumentFragment();
+
+        emails.forEach((email) => {
+          const item = document.createElement('button');
+          item.type = 'button';
+          item.className = 'mail-item';
+          item.dataset.emailId = email.id;
+          item.innerHTML = `
+            <div class="mail-subject">${email.subject}</div>
+            <div class="mail-date">${email.date}</div>
+          `;
+
+          item.addEventListener('click', () => renderEmail(email.id));
+          fragment.appendChild(item);
+        });
+
+        mailList.appendChild(fragment);
+      }
+
+      renderList();
+      renderEmail(emails[0].id);
+    </script>
+  </body>
+</html>

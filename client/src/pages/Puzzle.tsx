@@ -9,7 +9,6 @@ const INSPECT_MESSAGES_BY_SLUG: Record<string, string> = {
   cofre: 'A resposta está na url...',
 };
 
-const ERROR_MESSAGE_DURATION_MS = 3000;
 
 function normalizeInput(text: string): string {
   return text
@@ -193,9 +192,6 @@ export default function Puzzle() {
     if (match && !currentPuzzle) navigate('/room1');
   }, [match, currentPuzzle, navigate]);
 
-  useEffect(() => {
-    setErrorMessage('');
-  }, [slug]);
 
   const registerWrongAttempt = (puzzleSlug: string, input: string): string => {
     const nextAttempt = (wrongAttemptsBySlug[puzzleSlug] ?? 0) + 1;
@@ -209,7 +205,8 @@ export default function Puzzle() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+    setErrorMessage('');
+
     // Validação especial para o enigma 'festa' no modo Hard
     if (mode === 'hard' && slug === 'festa') {
       const isPuzzleComplete = puzzleStates.get('festa') === true;
@@ -217,19 +214,13 @@ export default function Puzzle() {
 
       if (!isPuzzleComplete) {
         setErrorMessage('❌ O PUZZLE NÃO ESTÁ COMPLETO!');
-        setTimeout(() => {
-          navigate('/room1/cofre');
-          setErrorMessage('');
-        }, ERROR_MESSAGE_DURATION_MS);
+        navigate('/room1/cofre');
         return;
       }
 
       if (!isAnswerCorrect) {
         setErrorMessage(registerWrongAttempt(slug, userAnswer));
-        setTimeout(() => {
-          navigate('/room1/cofre');
-          setErrorMessage('');
-        }, ERROR_MESSAGE_DURATION_MS);
+        navigate('/room1/cofre');
         return;
       }
 
@@ -245,7 +236,7 @@ export default function Puzzle() {
           navigate(`/room1/${proximoEnigma}`);
         } else {
           endGame();
-          navigate('/room1');
+          window.location.assign('/archive/email/');
         }
       }, 1000);
       return;
@@ -264,21 +255,15 @@ export default function Puzzle() {
           navigate(`/room1/${proximoEnigma}`);
         } else {
           endGame();
-          navigate('/room1');
+          window.location.assign('/archive/email/');
         }
       }, 1000);
     } else if (mode === 'hard') {
       // Punição para erro de senha em modo Hard (outros enigmas)
       setErrorMessage(registerWrongAttempt(slug!, userAnswer));
-      setTimeout(() => {
-        navigate('/room1/cofre');
-        setErrorMessage('');
-      }, ERROR_MESSAGE_DURATION_MS);
+      navigate('/room1/cofre');
     } else {
       setErrorMessage(registerWrongAttempt(slug!, userAnswer));
-      setTimeout(() => {
-        setErrorMessage('');
-      }, ERROR_MESSAGE_DURATION_MS);
     }
   };
 
