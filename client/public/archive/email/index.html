@@ -188,19 +188,102 @@
     </main>
 
     <script>
-      const emails = Array.from({ length: 17 }, (_, index) => {
-        const emailNumber = index + 1;
-        return {
-          id: `email-${emailNumber}`,
-          from: 'archive@segredobalian.space',
-          to: 'you@segredobalian.space',
-          subject: emailNumber === 6 || emailNumber === 12 ? `RE: Arquivo ${String(emailNumber - 1).padStart(2, '0')}` : `Arquivo ${String(emailNumber).padStart(2, '0')}`,
-          date: `00/${String(emailNumber).padStart(2, '0')}/20XX · 23:${String((emailNumber * 3) % 60).padStart(2, '0')}`,
-          body: `Este é um espaço reservado para o conteúdo do e-mail ${String(emailNumber).padStart(2, '0')}.
+      const emails = [
+        {
+          id: 'email-1',
+          from: 'danicabalian@workspace.com',
+          to: 'k.moretti@contato.org',
+          subject: 'Próximos passos.',
+          date: '20/11/2024 20:33',
+          body: `Boa noite, senhor.
+
+Conforme alinhamos, consigo organizar um “panorama” mensal do que está em andamento dentro da Devenementiel. Principalmente frentes de projeto, previsões de custo, contatos-chave e movimentações de fornecedores.
+
+Para manter isso seguro e simples, prefiro tratar a entrega de forma presencial, em encontros curtos e objetivos. Você comentou sobre uma rotina mensal; para mim funciona.
+Sugestão: Toda última quinta-feira do mês, 19h20, no mesmo local de ontem.
+Levo um resumo inicial e uma cópia dos arquivos no pendrive fornecido.
+
+Atenciosamente,
+Danica Ballian.`
+        },
+        {
+          id: 'email-2',
+          from: 'danicabalian@workspace.com',
+          to: 'k.moretti@contato.org',
+          subject: 'Atualização mensal - Dezembro/24.',
+          date: '23/12/2024 19:57',
+          body: `Boa noite, senhor.
+Confirmando que estará tudo pronto para a primeira entrega às 19h20 de quinta-feira. Estamos em época de fechamento e está uma bagunça deliciosa por aqui: gente correndo, planilhas abertas, retrabalho, ninguém prestando atenção em nada além do próprio incêndio.
+Consegui reunir uma cópia completa do quadro do mês:
+• projetos em andamento e próximos pitches;
+• orçamentos (com versões anteriores e cortes aprovados);
+• lista de fornecedores e condições praticadas;
+• histórico de cliente (ajustes, exigências, pontos fracos);
+• um mapa rápido de quem aprova o quê.
+Levo tudo em um pendrive, como combinado.
+
+Atenciosamente,
+Danica Balian.`
+        },
+        {
+          id: 'email-3',
+          from: 'k.moretti@contato.org',
+          to: 'danicabalian@workspace.com',
+          subject: 'RE: Atualização mensal - Dezembro/24.',
+          date: '24/12/2024 10:26',
+          body: `Interessante.
+Estou ansioso para descobrir se meu investimento vai valer a pena.
+Reservei uma mesa para nós, seja discreta.
+E, por favor, sem muitas formalidades. Você pode me chamar pelo meu nome, Danica.
+
+Nos vemos em breve.
+Kian A. Moretti.`
+        },
+        {
+          id: 'email-4',
+          from: 'danicabalian@workspace.com',
+          to: 'k.moretti@contato.org',
+          subject: 'Atualização mensal - Janeiro/25.',
+          date: '20/01/2025 19:09',
+          body: `Boa noite, Kian.
+Este mês fui mais fundo do que o habitual.
+Além do panorama, cruzei as cotações com o que realmente foi aprovado (e com o que “sumiu” na última revisão). Dá para ver onde mudam escopo, valores e prazos (e quem solicita). Além disso, este mês consegui coletar algumas informações sobre clientes e renovações de contratos. Consegui identificar os “gatilhos” de decisão e as fragilidades que costumam pesar na negociação.
+
+Posso te resumir em 20 minutos e te entregar o material.
+Podemos agendar esse encontro para amanhã?
+
+Atenciosamente,
+Danica Balian.`
+        },
+        {
+          id: 'email-5',
+          from: 'k.moretti@contato.org',
+          to: 'danicabalian@workspace.com',
+          subject: 'RE: Atualização mensal - Janeiro/25.',
+          date: '20/01/2025 19:19',
+          body: `Podemos agendar essa reunião para amanhã, suas entregas virão em um ótimo momento.
+Está fazendo um excelente trabalho, Danica.
+Gosto de pessoas esforçadas como você.
+
+Se esse material for tão bom quanto o que me promete, pode esperar por um generoso bônus :).
+
+Aguardo ansiosamente.
+Kian A. Moretti.`
+        },
+        ...Array.from({ length: 12 }, (_, index) => {
+          const emailNumber = index + 6;
+          return {
+            id: `email-${emailNumber}`,
+            from: 'archive@segredobalian.space',
+            to: 'you@segredobalian.space',
+            subject: emailNumber === 6 || emailNumber === 12 ? `RE: Arquivo ${String(emailNumber - 1).padStart(2, '0')}` : `Arquivo ${String(emailNumber).padStart(2, '0')}`,
+            date: `00/${String(emailNumber).padStart(2, '0')}/20XX · 23:${String((emailNumber * 3) % 60).padStart(2, '0')}`,
+            body: `Este é um espaço reservado para o conteúdo do e-mail ${String(emailNumber).padStart(2, '0')}.
 
 Assim que você enviar os textos finais, este corpo será substituído pela mensagem oficial.`
-        };
-      });
+          };
+        })
+      ];
 
       const mailList = document.getElementById('mailList');
       const from = document.getElementById('from');
