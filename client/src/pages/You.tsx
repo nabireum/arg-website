@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useLocation } from 'wouter';
 
 const REVEAL_LINES = [
   '(Parabéns por completar o modo dificil.)',
@@ -27,7 +26,6 @@ function formatDuration(totalSeconds: number): string {
 }
 
 export default function You() {
-  const [, navigate] = useLocation();
   const [revealedCount, setRevealedCount] = useState(0);
   const [question, setQuestion] = useState('');
   const [name, setName] = useState('');
@@ -42,12 +40,6 @@ export default function You() {
   }, []);
 
   useEffect(() => {
-    const isUnlocked = sessionStorage.getItem('hardmodeRewardUnlocked') === 'true';
-    if (!isUnlocked) {
-      navigate('/room1');
-      return;
-    }
-
     const interval = window.setInterval(() => {
       setRevealedCount((count) => {
         if (count >= REVEAL_LINES.length) {
@@ -59,7 +51,7 @@ export default function You() {
     }, REVEAL_INTERVAL_MS);
 
     return () => window.clearInterval(interval);
-  }, [navigate]);
+  }, []);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
