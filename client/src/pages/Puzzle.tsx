@@ -5,6 +5,8 @@ import SlidingPuzzle from '@/components/SlidingPuzzle';
 import { useGame } from '@/contexts/GameContext';
 import { useInspectComment } from '@/hooks/useInspectComment';
 
+const HARD_MODE_TOTAL_SECONDS = 15 * 60;
+
 const INSPECT_MESSAGES_BY_SLUG: Record<string, string> = {
   cofre: 'A resposta está na url...',
 };
@@ -235,8 +237,18 @@ export default function Puzzle() {
           setIsCorrect(false);
           navigate(`/room1/${proximoEnigma}`);
         } else {
+          const completedInHardMode = mode === 'hard';
+          const completionSeconds = HARD_MODE_TOTAL_SECONDS - timeRemaining;
+
           endGame();
-          window.location.assign('/archive/email/');
+
+          if (completedInHardMode) {
+            sessionStorage.setItem('hardmodeRewardUnlocked', 'true');
+            sessionStorage.setItem('hardmodeCompletionSeconds', String(Math.max(completionSeconds, 0)));
+            window.location.assign('/room/you');
+          } else {
+            window.location.assign('/archive/email/');
+          }
         }
       }, 1000);
       return;
@@ -254,8 +266,18 @@ export default function Puzzle() {
           setIsCorrect(false);
           navigate(`/room1/${proximoEnigma}`);
         } else {
+          const completedInHardMode = mode === 'hard';
+          const completionSeconds = HARD_MODE_TOTAL_SECONDS - timeRemaining;
+
           endGame();
-          window.location.assign('/archive/email/');
+
+          if (completedInHardMode) {
+            sessionStorage.setItem('hardmodeRewardUnlocked', 'true');
+            sessionStorage.setItem('hardmodeCompletionSeconds', String(Math.max(completionSeconds, 0)));
+            window.location.assign('/room/you');
+          } else {
+            window.location.assign('/archive/email/');
+          }
         }
       }, 1000);
     } else if (mode === 'hard') {
