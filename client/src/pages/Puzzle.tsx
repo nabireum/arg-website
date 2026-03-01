@@ -9,6 +9,8 @@ const INSPECT_MESSAGES_BY_SLUG: Record<string, string> = {
   cofre: 'A resposta está na url...',
 };
 
+const ERROR_MESSAGE_DURATION_MS = 3000;
+
 function normalizeInput(text: string): string {
   return text
     .normalize('NFD')
@@ -218,7 +220,7 @@ export default function Puzzle() {
         setTimeout(() => {
           navigate('/room1/cofre');
           setErrorMessage('');
-        }, 1500);
+        }, ERROR_MESSAGE_DURATION_MS);
         return;
       }
 
@@ -227,7 +229,7 @@ export default function Puzzle() {
         setTimeout(() => {
           navigate('/room1/cofre');
           setErrorMessage('');
-        }, 1500);
+        }, ERROR_MESSAGE_DURATION_MS);
         return;
       }
 
@@ -271,12 +273,12 @@ export default function Puzzle() {
       setTimeout(() => {
         navigate('/room1/cofre');
         setErrorMessage('');
-      }, 1500);
+      }, ERROR_MESSAGE_DURATION_MS);
     } else {
       setErrorMessage(registerWrongAttempt(slug!, userAnswer));
       setTimeout(() => {
         setErrorMessage('');
-      }, 1500);
+      }, ERROR_MESSAGE_DURATION_MS);
     }
   };
 
