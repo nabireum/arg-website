@@ -180,10 +180,6 @@ export default function Puzzle() {
   useInspectComment(puzzleRef, inspectMessage);
 
   useEffect(() => {
-    if (!mode) navigate('/room1');
-  }, [mode, navigate]);
-
-  useEffect(() => {
     if (isTimeUp && mode === 'hard') {
       endGame();
       navigate('/room1');
